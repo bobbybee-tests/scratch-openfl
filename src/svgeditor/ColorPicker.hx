@@ -19,21 +19,6 @@
 
 package svgeditor;
 
-import svgeditor.Bitmap;
-import svgeditor.BitmapData;
-import svgeditor.ColorTransform;
-import svgeditor.DrawProperties;
-import svgeditor.DrawPropertyUI;
-import svgeditor.Graphics;
-import svgeditor.IconButton;
-import svgeditor.ImageEdit;
-import svgeditor.Matrix;
-import svgeditor.MouseEvent;
-import svgeditor.Point;
-import svgeditor.Shape;
-import svgeditor.Slider;
-import svgeditor.Sprite;
-
 import flash.display.*;
 import flash.events.*;
 import flash.filters.GlowFilter;
@@ -178,8 +163,8 @@ class ColorPicker extends Sprite {
 		}
 		updateSwatches();
 		
-		if (selectedColor != null) 			drawColorSelector(selectedColor)  // clear the old color selection  ;
-		if (color != null) 			drawColorSelector(color, true)  // highlight the new selection  ;
+		if (selectedColor != null) 			drawColorSelector(selectedColor);  // clear the old color selection
+		if (color != null) 			drawColorSelector(color, true);  // highlight the new selection
 		selectedColor = color;
 	}
 	

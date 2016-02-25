@@ -19,9 +19,6 @@
 
 package svgeditor.objs;
 
-import svgeditor.objs.Graphics;
-import svgeditor.objs.Shape;
-
 import flash.display.*;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -258,7 +255,7 @@ class SVGShape extends Shape implements ISVGEditable {
 		getElement().setAttribute("fill", "none");
 		var stroke : String = getElement().getAttribute("stroke");
 		if (stroke == "none") 
-			getElement().setAttribute("stroke", "black")  // Take a snapshot  ;
+			getElement().setAttribute("stroke", "black");  // Take a snapshot
 		
 		
 		
@@ -422,7 +419,7 @@ class SVGShape extends Shape implements ISVGEditable {
 				elem.path.adjustPathAroundAnchor(index, 3, 1);
 				elem.path.adjustPathAroundAnchor(index, 3, 1);
 				elem.path.adjustPathAroundAnchor(index, 3, 1);
-			}++;passCount;
+			}; ++passCount;
 		}		while ((removedPoint));
 		img.dispose();
 		img2.dispose();

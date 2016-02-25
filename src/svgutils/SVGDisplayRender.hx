@@ -33,12 +33,6 @@
 
 package svgutils;
 
-import svgutils.Bitmap;
-import svgutils.DisplayObject;
-import svgutils.SVGElement;
-import svgutils.Shape;
-import svgutils.Sprite;
-
 import flash.display.*;
 import flash.geom.Rectangle;
 import flash.text.TextField;
@@ -58,7 +52,7 @@ class SVGDisplayRender {
 		if (rootSVG == null) 			return svgSprite;
 		
 		for (el/* AS3HX WARNING could not determine type for var: el exp: ECall(EField(EIdent(rootSVG),allElements),[]) type: null */ in rootSVG.allElements())renderElement(el);
-		if (currentShape != null) 			svgSprite.addChild(currentShape)  // add final shape layer, if any  ;
+		if (currentShape != null) 			svgSprite.addChild(currentShape);  // add final shape layer, if any
 		
 		if (doShift) {
 			var r : Rectangle = svgSprite.getBounds(svgSprite);

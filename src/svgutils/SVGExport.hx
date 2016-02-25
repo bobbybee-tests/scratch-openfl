@@ -32,7 +32,6 @@
 
 package svgutils;
 
-import svgutils.Matrix;
 import svgutils.SVGElement;
 
 import flash.display.BitmapData;
@@ -77,7 +76,7 @@ class SVGExport {
 		for (subEl/* AS3HX WARNING could not determine type for var: subEl exp: EField(EIdent(rootEl),subElements) type: null */ in rootEl.subElements){
 			addNodeTo(subEl, rootNode);
 		}
-		if (defsNode != null) 			rootNode.node.prependChild.innerData(defsNode)  // add defs node, if needed  ;
+		if (defsNode != null) 			rootNode.node.prependChild.innerData(defsNode);  // add defs node, if needed
 		return rootNode.node.toXMLString.innerData();
 	}
 	
