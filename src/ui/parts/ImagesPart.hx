@@ -34,9 +34,9 @@ import openfl.text.*;
 import haxe.Timer;
 import scratch.*;
 
-//import svgeditor.*;
+import svgeditor.*;
 
-//import svgutils.*;
+import svgutils.*;
 
 import translation.Translator;
 
@@ -97,12 +97,12 @@ class ImagesPart extends UIPart
 
 	
 	private function addEditor(isSVG : Bool) : Void{
-	/*	if (isSVG) {
+	  	if (isSVG) {
 			addChild(editor = new SVGEdit(app, this));
 		}
 		else {
-	*/		addChild(editor = new BitmapEdit(app, this));
-	//	}
+	  		addChild(editor = new BitmapEdit(app, this));
+	  	}
 	}
 
 	public static function strings() : Array<String>{
