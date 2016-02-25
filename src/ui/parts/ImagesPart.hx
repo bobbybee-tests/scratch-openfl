@@ -507,9 +507,9 @@ class ImagesPart extends UIPart
 			bitmapEditor.cropToSelection();
 		}
 	}
-	private function flipH(ignore : Dynamic) : Void{//editor.flipContent(false);
+	private function flipH(ignore : Dynamic) : Void{editor.flipContent(false);
 	}
-	private function flipV(ignore : Dynamic) : Void{//editor.flipContent(true);
+	private function flipV(ignore : Dynamic) : Void{editor.flipContent(true);
 	}
 
 	private function addCenterButton() : Void {
@@ -518,11 +518,11 @@ class ImagesPart extends UIPart
 			b.lastEvent.stopPropagation();
 		};
 		centerButton = makeTopButton(setCostumeCenter, "setCenter", true);
-		SimpleTooltips.add(centerButton, {
+		SimpleTooltips.add(centerButton, [
 					"text" => "Set costume center",
 					"direction" => "bottom",
 
-				});
+				]);
 		editor.registerToolButton("setCenter", centerButton);
 		addChild(centerButton);
 	}
