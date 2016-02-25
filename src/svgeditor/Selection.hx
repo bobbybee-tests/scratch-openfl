@@ -138,7 +138,7 @@ class Selection implements IEventDispatcher
         private function getNextIndex(cur:Int, dir:Int):Int {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 cur += dir;
-                while(cur>0 && cur < p.numChildren && !(p.getChildAt(cur) is ISVGEditable))
+                while(cur>0 && cur < p.numChildren && !Std.is(p.getChildAt(cur), ISVGEditable))
                         cur += dir;
 
                 cur = Math.max(0, Math.min(p.numChildren - 1, cur));
@@ -206,11 +206,11 @@ class Selection implements IEventDispatcher
         }
 
         public function isGroup():Boolean {
-                return (selectedObjects.length == 1 && selectedObjects[0] is SVGGroup);
+                return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGGroup));
         }
 
         public function isTextField():Boolean {
-                return (selectedObjects.length == 1 && selectedObjects[0] is SVGTextField);
+                return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGTextField));
         }
 
         public function canMoveByMouse():Boolean {
@@ -218,11 +218,11 @@ class Selection implements IEventDispatcher
         }
 
         public function isShape():Boolean {
-                return (selectedObjects.length == 1 && selectedObjects[0] is SVGShape);
+                return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGShape));
         }
 
         public function isImage():Boolean {
-                return (selectedObjects.length == 1 && selectedObjects[0] is SVGBitmap);
+                return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGBitmap));
         }
 
         public function getObjs():Array {
@@ -491,5 +491,6 @@ class Selection implements IEventDispatcher
         }
 }
 }
+
 
 
