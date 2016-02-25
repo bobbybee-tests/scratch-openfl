@@ -46,16 +46,15 @@
 
 package svgutils;
 
-import svgutils.SVGElement;
-import svgeditor.Selection;
-//import svgutils.SVGImportPath;
-
-import flash.events.IOErrorEvent;
+import openfl.events.IOErrorEvent;
 
 import util.Base64Encoder;
-import flash.display.Loader;
-import flash.events.Event;
-import flash.geom.*;
+import openfl.display.Loader;
+import openfl.events.Event;
+import openfl.geom.*;
+
+import svgutils.SVGElement;
+import svgeditor.Selection;
 
 class SVGImporter {
 	
