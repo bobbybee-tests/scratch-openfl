@@ -26,7 +26,7 @@ import openfl.events.Event;
 import openfl.events.IEventDispatcher;
 import openfl.filters.GlowFilter;
 import openfl.geom.Matrix;
-import openfl.geom.Point;
+import openfl.geom.PoInt;
 import openfl.geom.Rectangle;
 import openfl.text.TextFieldType;
 
@@ -135,7 +135,7 @@ class Selection implements IEventDispatcher
                 }
         }
 
-        private function getNextIndex(cur:int, dir:int):Int {
+        private function getNextIndex(cur:Int, dir:Int):Int {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 cur += dir;
                 while(cur>0 && cur < p.numChildren && !(p.getChildAt(cur) is ISVGEditable))
@@ -256,13 +256,13 @@ class Selection implements IEventDispatcher
 
         private var initialMatrices:Array;
         private var initialTempMatrix:Matrix;
-        private var rotationCenter:Point;
+        private var rotationCenter:PoInt;
         private var origRect:Rectangle;
-        private var maintainAspectRatio:Boolean;
+        private var maIntainAspectRatio:Boolean;
         public function startResize(grabLoc:String) : Void {
                 saveMatrices();
                 origRect = getBounds(refDispObj);
-                maintainAspectRatio = (grabLoc != grabLoc.toLowerCase());
+                maIntainAspectRatio = (grabLoc != grabLoc.toLowerCase());
         }
 
         // This can probably be optimized even more
@@ -311,23 +311,23 @@ class Selection implements IEventDispatcher
                                 break;
                 }
 
-                var anchorPt:Point;
+                var anchorPt:PoInt;
                 switch(anchor) {
                         case 'topLeft':
                         case 'bottomRight':
                                 anchorPt = r[anchor];
                                 break;
                         case 'topRight':
-                                anchorPt = new Point(r.right, r.top);
+                                anchorPt = new PoInt(r.right, r.top);
                                 break;
                         case 'bottomLeft':
-                                anchorPt = new Point(r.left, r.bottom);
+                                anchorPt = new PoInt(r.left, r.bottom);
                                 break;
                 }
                 anchorPt = refDispObj.parent.globalToLocal(refDispObj.localToGlobal(anchorPt));
 
-                // Maintain aspect ratio if we're resizing a shape and
-                if(maintainAspectRatio) {
+                // MaIntain aspect ratio if we're resizing a shape and
+                if(maIntainAspectRatio) {
                         sx = sy = Math.min(sx, sy);
                 }
 
@@ -337,11 +337,11 @@ class Selection implements IEventDispatcher
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
-                        scaleAroundPoint(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
+                        scaleAroundPoInt(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
                 }
         }
 
-        private function scaleAroundPoint(objToScale:DisplayObject, regX:int, regY:int, scaleX:Number, scaleY:Number, m:Matrix) : Void{
+        private function scaleAroundPoInt(objToScale:DisplayObject, regX:Int, regY:Int, scaleX:Number, scaleY:Number, m:Matrix) : Void{
                 var r:Number = refDispObj.rotation * Math.PI / 180;
                 m.translate( -regX, -regY );
                 m.rotate(-r);
@@ -353,17 +353,17 @@ class Selection implements IEventDispatcher
 
         public function flip(vertical:Boolean = false) : Void {
                 var r:Rectangle = getBounds(refDispObj.parent);
-                var anchorPt:Point = new Point((r.left+r.right)/2, (r.top+r.bottom)/2);
+                var anchorPt:PoInt = new PoInt((r.left+r.right)/2, (r.top+r.bottom)/2);
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
-                        flipAroundPoint(obj, anchorPt.x, anchorPt.y, vertical);
+                        flipAroundPoInt(obj, anchorPt.x, anchorPt.y, vertical);
                 }
         }
 
         // TODO: Make more robust for flipping over and over (don't use the concatonated matrix, keep the transforms within the parent)
-        private function flipAroundPoint(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Boolean) : Void{
-                var p:Point = objToFlip.parent.localToGlobal(new Point(regX, regY));
+        private function flipAroundPoInt(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Boolean) : Void{
+                var p:PoInt = objToFlip.parent.localToGlobal(new PoInt(regX, regY));
                 var m2:Matrix = objToFlip.transform.concatenatedMatrix.clone();
                 m2.translate(-p.x, -p.y);
                 m2.scale(vertical ? 1 : -1, vertical ? -1 : 1);
@@ -375,7 +375,7 @@ class Selection implements IEventDispatcher
                 objToFlip.transform.matrix = m2;
         }
 
-        public function startRotation(center:Point) : Void {
+        public function startRotation(center:PoInt) : Void {
                 rotationCenter = refDispObj.parent.globalToLocal(center);
                 saveMatrices();
 
@@ -388,7 +388,7 @@ class Selection implements IEventDispatcher
                         initialMatrices.push(selectedObjects[i].transform.matrix.clone());
         }
 
-        // TODO: Move this into the SVGElement class
+        // TODO: Move this Into the SVGElement class
         public function setShapeProperties(props:DrawProperties) : Void {
                 for(i in 0...selectedObjects.length) {
                         var el:SVGElement = selectedObjects[i].getElement();
@@ -398,7 +398,7 @@ class Selection implements IEventDispatcher
         }
 
         public function doRotation(angle:Number) : Void {
-                var c:Point = rotationCenter;
+                var c:PoInt = rotationCenter;
                 for(i in 0...selectedObjects.length) {
                         var m:Matrix = initialMatrices[i].clone();
                         m.translate(-c.x, -c.y);
@@ -414,28 +414,28 @@ class Selection implements IEventDispatcher
                 refDispObj.transform.matrix = m;
         }
 
-        public function getGlobalBoundingPoints():Object {
+        public function getGlobalBoundingPoInts():Object {
                 var r:Rectangle = getBounds(refDispObj);
 
                 return {
                         topLeft:	refDispObj.localToGlobal(r.topLeft),
-                        topRight:	refDispObj.localToGlobal(new Point(r.right, r.top)),
-                        botLeft:	refDispObj.localToGlobal(new Point(r.left, r.bottom)),
+                        topRight:	refDispObj.localToGlobal(new PoInt(r.right, r.top)),
+                        botLeft:	refDispObj.localToGlobal(new PoInt(r.left, r.bottom)),
                         botRight:	refDispObj.localToGlobal(r.bottomRight)
                 };
         }
 
-        public function setTLPosition(p:Point) : Void {
-                var parentSpaceTL:Point = refDispObj.parent.globalToLocal(p);
-                var globalCurrentTL:Point = refDispObj.localToGlobal(getBounds(refDispObj).topLeft);
-                var offset:Point = parentSpaceTL.subtract(refDispObj.parent.globalToLocal(globalCurrentTL));
+        public function setTLPosition(p:PoInt) : Void {
+                var parentSpaceTL:PoInt = refDispObj.parent.globalToLocal(p);
+                var globalCurrentTL:PoInt = refDispObj.localToGlobal(getBounds(refDispObj).topLeft);
+                var offset:PoInt = parentSpaceTL.subtract(refDispObj.parent.globalToLocal(globalCurrentTL));
 //trace('offset: '+offset);
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
                         obj.x += offset.x;
                         obj.y += offset.y;
-                        var p2:Point = new Point(obj.x, obj.y);
+                        var p2:PoInt = new PoInt(obj.x, obj.y);
 //trace(obj+': '+p2);
                 }
 
@@ -462,8 +462,8 @@ class Selection implements IEventDispatcher
                         cast(selectedObjects[i], DisplayObject).filters = filters;
         }
 
-        // Below is the EventDispatcher interface implementation
-        public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false) : Void {
+        // Below is the EventDispatcher Interface implementation
+        public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:Int = 0, useWeakReference:Boolean = false) : Void {
                 for(i in 0...selectedObjects.length)
                         selectedObjects[i].addEventListener(type, listener, useCapture, priority, useWeakReference);
         }
