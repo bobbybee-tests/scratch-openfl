@@ -43,13 +43,13 @@ class Selection implements IEventDispatcher
         private var selectedObjects:Array;
         private var refDispObj:DisplayObject;
 
-        public function Selection(objs:Array) {
+        public function new(objs:Array) {
                 selectedObjects = objs;
 
                 createRefObject();
         }
 
-        private function createRefObject():void {
+        private function createRefObject() : Void {
                 if(refDispObj != null) {
                         if(refDispObj.parent) refDispObj.parent.removeChild(refDispObj);
                         refDispObj = null;
@@ -78,8 +78,8 @@ class Selection implements IEventDispatcher
 
                 // Get a copy of the selected objects
                 var objsCopy:Array = [];
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
-                        var dObj:DisplayObject = selectedObjects[i].parent;
+                for(i in 0...selectedObjects.length) {
+                        var dObj : DisplayObject = selectedObjects[i].parent;
                         var m:Matrix = new Matrix();
                         while(dObj != contentLayer) {
                                 m.concat(dObj.transform.matrix);
@@ -87,7 +87,7 @@ class Selection implements IEventDispatcher
                         }
 
                         var newObj:ISVGEditable = selectedObjects[i].clone();
-                        (newObj as DisplayObject).transform.matrix.concat(m);
+                        cast(newObj, DisplayObject).transform.matrix.concat(m);
                         newObj.getElement().transform = (newObj as DisplayObject).transform.matrix.clone();
                         objsCopy.push(newObj);
                 }
@@ -95,7 +95,7 @@ class Selection implements IEventDispatcher
                 return objsCopy;
         }
 
-        public function shutdown():void {
+        public function shutdown() : Void {
                 if(refDispObj.parent) refDispObj.parent.removeChild(refDispObj);
                 refDispObj = null;
         }
@@ -105,37 +105,37 @@ class Selection implements IEventDispatcher
         }
 
         // Bring the selected objects forward within their parent
-        public function raise(fully:Boolean = false):void {
+        public function raise(fully:Boolean = false) : Void {
                 var p:DisplayObjectContainer = refDispObj.parent;
-                var topIndex:uint = p.numChildren - 1;
+                var topIndex:Int = p.numChildren - 1;
                 if(fully) {
-                        for(var i:uint=0; i<selectedObjects.length; ++i)
+                        for(var i:Int=0; i<selectedObjects.length; ++i)
                                 p.setChildIndex(selectedObjects[i], topIndex);
                 }
                 else {
                         for(i=0; i<selectedObjects.length; ++i) {
-                                var idx:uint = getNextIndex(p.getChildIndex(selectedObjects[i]), 1);
+                                var idx:Int = getNextIndex(p.getChildIndex(selectedObjects[i]), 1);
                                 p.setChildIndex(selectedObjects[i], idx);
                         }
                 }
         }
 
         // Send the selected objects backward within their parent
-        public function lower(fully:Boolean = false):void {
+        public function lower(fully:Boolean = false) : Void {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 if(fully) {
-                        for(var i:uint=0; i<selectedObjects.length; ++i)
+                        for(var i:Int=0; i<selectedObjects.length; ++i)
                                 p.setChildIndex(selectedObjects[i], 0);
                 }
                 else {
                         for(i=0; i<selectedObjects.length; ++i) {
-                                var idx:uint = getNextIndex(p.getChildIndex(selectedObjects[i]), -1);
+                                var idx:Int = getNextIndex(p.getChildIndex(selectedObjects[i]), -1);
                                 p.setChildIndex(selectedObjects[i], idx);
                         }
                 }
         }
 
-        private function getNextIndex(cur:int, dir:int):uint {
+        private function getNextIndex(cur:int, dir:int):Int {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 cur += dir;
                 while(cur>0 && cur < p.numChildren && !(p.getChildAt(cur) is ISVGEditable))
@@ -146,12 +146,12 @@ class Selection implements IEventDispatcher
         }
 
         // Remove selected objects
-        public function remove():void {
+        public function remove() : Void {
                 if(selectedObjects.length == 0) return;
 
                 var p:DisplayObjectContainer = selectedObjects[0].parent;
                 if(p)
-                        for(var i:uint=0; i<selectedObjects.length; ++i)
+                        for(var i:Int=0; i<selectedObjects.length; ++i)
                                 p.removeChild(selectedObjects[i]);
                 else
                         trace("Selection contained orphaned objects");
@@ -166,7 +166,7 @@ class Selection implements IEventDispatcher
                         p.addChild(g);
 
                         // Add the children in the right order
-                        for(var i:uint=0; i<p.numChildren; ++i)
+                        for(var i:Int=0; i<p.numChildren; ++i)
                                 if(selectedObjects.indexOf(p.getChildAt(i)) != -1) {
                                         g.addChild(p.getChildAt(i));
                                         --i;
@@ -182,11 +182,11 @@ class Selection implements IEventDispatcher
                 if(isGroup()) {
                         var m:Matrix = selectedObjects[0].transform.matrix;
                         var g:SVGGroup = selectedObjects[0];
-                        var idx:uint = g.parent.getChildIndex(g) + 1;
+                        var idx:Int = g.parent.getChildIndex(g) + 1;
                         var newSelObjs:Array = [];
                         while(g.numChildren) {
                                 // Merge the matrices
-                                var gi:uint = g.numChildren - 1;
+                                var gi:Int = g.numChildren - 1;
                                 var dObj:DisplayObject = g.getChildAt(gi);
                                 var fm:Matrix = dObj.transform.matrix.clone();
                                 fm.concat(m);
@@ -229,8 +229,8 @@ class Selection implements IEventDispatcher
                 return selectedObjects;
         }
 
-        public function saveTransform():void {
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
+        public function saveTransform() : Void {
+                for(var i:Int=0; i<selectedObjects.length; ++i) {
                         var elem:SVGElement = (selectedObjects[i] as ISVGEditable).getElement();
                         var m:Matrix = selectedObjects[i].transform.matrix;
                         elem.setAttribute('transform', 'matrix('+m.a+','+m.b+','+m.c+','+m.d+','+m.tx+','+m.ty+')');
@@ -259,7 +259,7 @@ class Selection implements IEventDispatcher
         private var rotationCenter:Point;
         private var origRect:Rectangle;
         private var maintainAspectRatio:Boolean;
-        public function startResize(grabLoc:String):void {
+        public function startResize(grabLoc:String) : Void {
                 saveMatrices();
                 origRect = getBounds(refDispObj);
                 maintainAspectRatio = (grabLoc != grabLoc.toLowerCase());
@@ -267,7 +267,7 @@ class Selection implements IEventDispatcher
 
         // This can probably be optimized even more
         // The grab location won't change after startResize is called
-        public function scaleByMouse(grabLoc:String):void {
+        public function scaleByMouse(grabLoc:String) : Void {
                 var r:Rectangle = origRect;
                 var sx:Number = 1.0;
                 var sy:Number = 1.0;
@@ -335,13 +335,13 @@ class Selection implements IEventDispatcher
                 //sx = Math.max(sx, 0);
                 //sy = Math.max(sy, 0);
 
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
+                for(var i:Int=0; i<selectedObjects.length; ++i) {
                         var obj:DisplayObject = selectedObjects[i];
                         scaleAroundPoint(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
                 }
         }
 
-        private function scaleAroundPoint(objToScale:DisplayObject, regX:int, regY:int, scaleX:Number, scaleY:Number, m:Matrix):void{
+        private function scaleAroundPoint(objToScale:DisplayObject, regX:int, regY:int, scaleX:Number, scaleY:Number, m:Matrix) : Void{
                 var r:Number = refDispObj.rotation * Math.PI / 180;
                 m.translate( -regX, -regY );
                 m.rotate(-r);
@@ -351,18 +351,18 @@ class Selection implements IEventDispatcher
                 objToScale.transform.matrix = m;
         }
 
-        public function flip(vertical:Boolean = false):void {
+        public function flip(vertical:Boolean = false) : Void {
                 var r:Rectangle = getBounds(refDispObj.parent);
                 var anchorPt:Point = new Point((r.left+r.right)/2, (r.top+r.bottom)/2);
 
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
+                for(var i:Int=0; i<selectedObjects.length; ++i) {
                         var obj:DisplayObject = selectedObjects[i];
                         flipAroundPoint(obj, anchorPt.x, anchorPt.y, vertical);
                 }
         }
 
         // TODO: Make more robust for flipping over and over (don't use the concatonated matrix, keep the transforms within the parent)
-        private function flipAroundPoint(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Boolean):void{
+        private function flipAroundPoint(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Boolean) : Void{
                 var p:Point = objToFlip.parent.localToGlobal(new Point(regX, regY));
                 var m2:Matrix = objToFlip.transform.concatenatedMatrix.clone();
                 m2.translate(-p.x, -p.y);
@@ -375,31 +375,31 @@ class Selection implements IEventDispatcher
                 objToFlip.transform.matrix = m2;
         }
 
-        public function startRotation(center:Point):void {
+        public function startRotation(center:Point) : Void {
                 rotationCenter = refDispObj.parent.globalToLocal(center);
                 saveMatrices();
 
                 initialTempMatrix = refDispObj.transform.matrix.clone();
         }
 
-        private function saveMatrices():void {
+        private function saveMatrices() : Void {
                 initialMatrices = new Array();
-                for(var i:uint=0; i<selectedObjects.length; ++i)
+                for(var i:Int=0; i<selectedObjects.length; ++i)
                         initialMatrices.push(selectedObjects[i].transform.matrix.clone());
         }
 
         // TODO: Move this into the SVGElement class
-        public function setShapeProperties(props:DrawProperties):void {
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
+        public function setShapeProperties(props:DrawProperties) : Void {
+                for(var i:Int=0; i<selectedObjects.length; ++i) {
                         var el:SVGElement = selectedObjects[i].getElement();
                         el.applyShapeProps(props);
                         selectedObjects[i].redraw();
                 }
         }
 
-        public function doRotation(angle:Number):void {
+        public function doRotation(angle:Number) : Void {
                 var c:Point = rotationCenter;
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
+                for(var i:Int=0; i<selectedObjects.length; ++i) {
                         var m:Matrix = initialMatrices[i].clone();
                         m.translate(-c.x, -c.y);
                         m.rotate( angle );
@@ -425,13 +425,13 @@ class Selection implements IEventDispatcher
                 };
         }
 
-        public function setTLPosition(p:Point):void {
+        public function setTLPosition(p:Point) : Void {
                 var parentSpaceTL:Point = refDispObj.parent.globalToLocal(p);
                 var globalCurrentTL:Point = refDispObj.localToGlobal(getBounds(refDispObj).topLeft);
                 var offset:Point = parentSpaceTL.subtract(refDispObj.parent.globalToLocal(globalCurrentTL));
 //trace('offset: '+offset);
 
-                for(var i:uint=0; i<selectedObjects.length; ++i) {
+                for(var i:Int=0; i<selectedObjects.length; ++i) {
                         var obj:DisplayObject = selectedObjects[i];
                         obj.x += offset.x;
                         obj.y += offset.y;
@@ -447,7 +447,7 @@ class Selection implements IEventDispatcher
         public function getBounds(ctx:DisplayObject):Rectangle {
                 var bounds:Rectangle = selectedObjects[0].getBounds(ctx);
                 if(selectedObjects.length > 1) {
-                        for(var i:uint = 1; i<selectedObjects.length; ++i) {
+                        for(var i:Int = 1; i<selectedObjects.length; ++i) {
                                 bounds = bounds.union(selectedObjects[i].getBounds(ctx));
                         }
                 }
@@ -455,27 +455,27 @@ class Selection implements IEventDispatcher
                 return bounds;
         }
 
-        public function toggleHighlight(on:Boolean):void {
+        public function toggleHighlight(on:Boolean) : Void {
                 return;
                 var filters:Array = on ? [new GlowFilter(0x28A5DA)] : [];
-                for(var i:uint=0; i<selectedObjects.length; ++i)
+                for(var i:Int=0; i<selectedObjects.length; ++i)
                         (selectedObjects[i] as DisplayObject).filters = filters;
         }
 
         // Below is the EventDispatcher interface implementation
-        public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
-                for(var i:uint=0; i<selectedObjects.length; ++i)
+        public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false) : Void {
+                for(var i:Int=0; i<selectedObjects.length; ++i)
                         selectedObjects[i].addEventListener(type, listener, useCapture, priority, useWeakReference);
         }
 
-        public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-                for(var i:uint=0; i<selectedObjects.length; ++i)
+        public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false) : Void {
+                for(var i:Int=0; i<selectedObjects.length; ++i)
                         selectedObjects[i].removeEventListener(type, listener, useCapture);
         }
 
         public function dispatchEvent(event:Event):Boolean {
                 var stopProp:Boolean = false;
-                for(var i:uint=0; i<selectedObjects.length; ++i)
+                for(var i:Int=0; i<selectedObjects.length; ++i)
                         if(selectedObjects[i].dispatchEvent(event))
                                 stopProp = true;
 
