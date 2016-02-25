@@ -91,23 +91,13 @@ public class SVGImporter {
 		var tag:String = xml.localName();
 		if (ignoredTags.indexOf(tag) >= 0) return null; // ignored by Scratch
 		switch (tag) {
-		case 'circle':
-		case 'clipPath':
-		case 'ellipse':
-		case 'image':
-		case 'line':
-		case 'path':
-		case 'polygon':
-		case 'polyline':
-		case 'rect':
-		case 'text':
+		case 'circle', 'clipPath', 'ellipse', 'image', 'line', 'path', 'polygon', 'polyline', 'rect', 'text':
 			return readBasic(xml, parentList);
 		case 'defs':
 			return readDefs(xml, parentList);
 		case 'g':
 			return readGroup(xml, parentList);
-		case 'linearGradient':
-		case 'radialGradient':
+		case 'linearGradient', 'radialGradient':
 			return readGradient(xml, parentList);
 		case 'stop':
 			return readBasic(xml, parentList);
