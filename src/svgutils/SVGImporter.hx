@@ -94,7 +94,7 @@ class SVGImporter {
 		// or null if the given element is empty or is ignored by Scratch.
 		// Recursively extract subelements if appropriate.
 		var tag : String = xml.node.localName.innerData();
-		if (Lambda.indexOf(ignoredTags, tag) >= 0) 			return null  // ignored by Scratch  ;
+		if (Lambda.indexOf(ignoredTags, tag) >= 0) 			return null;  // ignored by Scratch
 		switch (tag) {
 			case "circle", "clipPath", "ellipse", "image", "line", "path", "polygon", "polyline", "rect", "text":
 				return readBasic(xml, parentList);
@@ -166,7 +166,7 @@ class SVGImporter {
 			var el : SVGElement = extractElement(elementXML, parentList);
 			if (el != null) 				result.subElements.push(el);
 		}
-		if (result.subElements.length == 0) 			return null  // empty group  ;
+		if (result.subElements.length == 0) 			return null;  // empty group
 		return result;
 	}
 	
