@@ -46,10 +46,9 @@
 
 package svgutils;
 
-import svgutils.Matrix;
-import svgutils.Point;
 import svgutils.SVGElement;
-import svgutils.SVGImportPath;
+import svgeditor.Selection;
+//import svgutils.SVGImportPath;
 
 import flash.events.IOErrorEvent;
 
