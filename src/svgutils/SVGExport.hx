@@ -39,8 +39,12 @@ import flash.display.Sprite;
 import flash.geom.*;
 import flash.utils.ByteArray;
 import util.Base64Encoder;
-import by.blooddy.crypto.image.PNG24Encoder;
-import by.blooddy.crypto.image.PNGFilter;
+
+// Embedded bitmaps are not supported at the moment,
+// as this functionality depends on an external library.
+
+// import by.blooddy.crypto.image.PNG24Encoder;
+// import by.blooddy.crypto.image.PNGFilter;
 
 class SVGExport {
 	
@@ -123,8 +127,12 @@ class SVGExport {
 		if (el.bitmap == null) 			return;
 		var attrList : Array<Dynamic> = ["x", "y", "width", "height", "opacity", "scratch-type"];
 		var node : FastXML = createNode(el, attrList);
-		var pixels : ByteArray = PNG24Encoder.encode(el.bitmap, PNGFilter.PAETH);
-		node.setAttribute("xlink:href", "data:image/png;base64," + Base64Encoder.encode(pixels)) = "data:image/png;base64," + Base64Encoder.encode(pixels);
+		//var pixels : ByteArray = PNG24Encoder.encode(el.bitmap, PNGFilter.PAETH);
+		//node.setAttribute("xlink:href", "data:image/png;base64," + Base64Encoder.encode(pixels)) = "data:image/png;base64," + Base64Encoder.encode(pixels);
+
+		// TODO: correct behaviour
+		node.setAttribute("xlink:href", "data:image/png;base64,");
+
 		setTransform(el, node);
 		xml.node.appendChild.innerData(node);
 	}
