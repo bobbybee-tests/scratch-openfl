@@ -109,11 +109,11 @@ class Selection implements IEventDispatcher
                 var p:DisplayObjectContainer = refDispObj.parent;
                 var topIndex:Int = p.numChildren - 1;
                 if(fully) {
-                        for(var i:Int=0; i<selectedObjects.length; ++i)
+                        for(i in 0...selectedObjects.length)
                                 p.setChildIndex(selectedObjects[i], topIndex);
                 }
                 else {
-                        for(i=0; i<selectedObjects.length; ++i) {
+                        for(i in 0...selectedObjects.length) {
                                 var idx:Int = getNextIndex(p.getChildIndex(selectedObjects[i]), 1);
                                 p.setChildIndex(selectedObjects[i], idx);
                         }
@@ -124,11 +124,11 @@ class Selection implements IEventDispatcher
         public function lower(fully:Boolean = false) : Void {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 if(fully) {
-                        for(var i:Int=0; i<selectedObjects.length; ++i)
+                        for(i in 0...selectedObjects.length)
                                 p.setChildIndex(selectedObjects[i], 0);
                 }
                 else {
-                        for(i=0; i<selectedObjects.length; ++i) {
+                        for(i in 0...selectedObjects.length) {
                                 var idx:Int = getNextIndex(p.getChildIndex(selectedObjects[i]), -1);
                                 p.setChildIndex(selectedObjects[i], idx);
                         }
@@ -151,7 +151,7 @@ class Selection implements IEventDispatcher
 
                 var p:DisplayObjectContainer = selectedObjects[0].parent;
                 if(p)
-                        for(var i:Int=0; i<selectedObjects.length; ++i)
+                        for(i in 0...selectedObjects.length)
                                 p.removeChild(selectedObjects[i]);
                 else
                         trace("Selection contained orphaned objects");
@@ -166,7 +166,7 @@ class Selection implements IEventDispatcher
                         p.addChild(g);
 
                         // Add the children in the right order
-                        for(var i:Int=0; i<p.numChildren; ++i)
+                        for(i in 0...p.numChildren)
                                 if(selectedObjects.indexOf(p.getChildAt(i)) != -1) {
                                         g.addChild(p.getChildAt(i));
                                         --i;
@@ -230,7 +230,7 @@ class Selection implements IEventDispatcher
         }
 
         public function saveTransform() : Void {
-                for(var i:Int=0; i<selectedObjects.length; ++i) {
+                for(i in 0...selectedObjects.length) {
                         var elem:SVGElement = cast(selectedObjects[i], ISVGEditable).getElement();
                         var m:Matrix = selectedObjects[i].transform.matrix;
                         elem.setAttribute('transform', 'matrix('+m.a+','+m.b+','+m.c+','+m.d+','+m.tx+','+m.ty+')');
@@ -335,7 +335,7 @@ class Selection implements IEventDispatcher
                 //sx = Math.max(sx, 0);
                 //sy = Math.max(sy, 0);
 
-                for(var i:Int=0; i<selectedObjects.length; ++i) {
+                for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
                         scaleAroundPoint(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
                 }
@@ -355,7 +355,7 @@ class Selection implements IEventDispatcher
                 var r:Rectangle = getBounds(refDispObj.parent);
                 var anchorPt:Point = new Point((r.left+r.right)/2, (r.top+r.bottom)/2);
 
-                for(var i:Int=0; i<selectedObjects.length; ++i) {
+                for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
                         flipAroundPoint(obj, anchorPt.x, anchorPt.y, vertical);
                 }
@@ -384,13 +384,13 @@ class Selection implements IEventDispatcher
 
         private function saveMatrices() : Void {
                 initialMatrices = new Array();
-                for(var i:Int=0; i<selectedObjects.length; ++i)
+                for(i in 0...selectedObjects.length)
                         initialMatrices.push(selectedObjects[i].transform.matrix.clone());
         }
 
         // TODO: Move this into the SVGElement class
         public function setShapeProperties(props:DrawProperties) : Void {
-                for(var i:Int=0; i<selectedObjects.length; ++i) {
+                for(i in 0...selectedObjects.length) {
                         var el:SVGElement = selectedObjects[i].getElement();
                         el.applyShapeProps(props);
                         selectedObjects[i].redraw();
@@ -399,7 +399,7 @@ class Selection implements IEventDispatcher
 
         public function doRotation(angle:Number) : Void {
                 var c:Point = rotationCenter;
-                for(var i:Int=0; i<selectedObjects.length; ++i) {
+                for(i in 0...selectedObjects.length) {
                         var m:Matrix = initialMatrices[i].clone();
                         m.translate(-c.x, -c.y);
                         m.rotate( angle );
@@ -431,7 +431,7 @@ class Selection implements IEventDispatcher
                 var offset:Point = parentSpaceTL.subtract(refDispObj.parent.globalToLocal(globalCurrentTL));
 //trace('offset: '+offset);
 
-                for(var i:Int=0; i<selectedObjects.length; ++i) {
+                for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
                         obj.x += offset.x;
                         obj.y += offset.y;
@@ -447,7 +447,7 @@ class Selection implements IEventDispatcher
         public function getBounds(ctx:DisplayObject):Rectangle {
                 var bounds:Rectangle = selectedObjects[0].getBounds(ctx);
                 if(selectedObjects.length > 1) {
-                        for(var i:Int = 1; i<selectedObjects.length; ++i) {
+                        for(i in 1...selectedObjects.length) {
                                 bounds = bounds.union(selectedObjects[i].getBounds(ctx));
                         }
                 }
@@ -458,24 +458,24 @@ class Selection implements IEventDispatcher
         public function toggleHighlight(on:Boolean) : Void {
                 return;
                 var filters:Array = on ? [new GlowFilter(0x28A5DA)] : [];
-                for(var i:Int=0; i<selectedObjects.length; ++i)
+                for(i in 0...selectedObjects.length)
                         cast(selectedObjects[i], DisplayObject).filters = filters;
         }
 
         // Below is the EventDispatcher interface implementation
         public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false) : Void {
-                for(var i:Int=0; i<selectedObjects.length; ++i)
+                for(i in 0...selectedObjects.length)
                         selectedObjects[i].addEventListener(type, listener, useCapture, priority, useWeakReference);
         }
 
         public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false) : Void {
-                for(var i:Int=0; i<selectedObjects.length; ++i)
+                for(i in 0...selectedObjects.length)
                         selectedObjects[i].removeEventListener(type, listener, useCapture);
         }
 
         public function dispatchEvent(event:Event):Boolean {
                 var stopProp:Boolean = false;
-                for(var i:Int=0; i<selectedObjects.length; ++i)
+                for(i in 0...selectedObjects.length)
                         if(selectedObjects[i].dispatchEvent(event))
                                 stopProp = true;
 
@@ -491,4 +491,5 @@ class Selection implements IEventDispatcher
         }
 }
 }
+
 
