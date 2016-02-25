@@ -43,7 +43,7 @@ class Selection implements IEventDispatcher
         private var selectedObjects: Array<Dynamic>;
         private var refDispObj:DisplayObject;
 
-        public function new(objs:Array) {
+        public function new(objs: Array<Dynamic>) {
                 selectedObjects = objs;
 
                 createRefObject();
@@ -73,11 +73,11 @@ class Selection implements IEventDispatcher
         // TODO: remove the requirement to send the contentLayer
         // Clone all of the selected objects and return an array of them
         public function cloneObjs(contentLayer:Sprite):Array {
-                var copiedObjects:Array = null;
+                var copiedObjects: Array<Dynamic> = null;
                 if(!selectedObjects.length) return copiedObjects;
 
                 // Get a copy of the selected objects
-                var objsCopy:Array = [];
+                var objsCopy: Array<Dynamic> = [];
                 for(i in 0...selectedObjects.length) {
                         var dObj : DisplayObject = selectedObjects[i].parent;
                         var m:Matrix = new Matrix();
@@ -183,7 +183,7 @@ class Selection implements IEventDispatcher
                         var m:Matrix = selectedObjects[0].transform.matrix;
                         var g:SVGGroup = selectedObjects[0];
                         var idx:Int = g.parent.getChildIndex(g) + 1;
-                        var newSelObjs:Array = [];
+                        var newSelObjs: Array<Dynamic> = [];
                         while(g.numChildren) {
                                 // Merge the matrices
                                 var gi:Int = g.numChildren - 1;
@@ -457,7 +457,7 @@ class Selection implements IEventDispatcher
 
         public function toggleHighlight(on:Boolean) : Void {
                 return;
-                var filters:Array = on ? [new GlowFilter(0x28A5DA)] : [];
+                var filters: Array<Dynamic> = on ? [new GlowFilter(0x28A5DA)] : [];
                 for(i in 0...selectedObjects.length)
                         cast(selectedObjects[i], DisplayObject).filters = filters;
         }
@@ -490,6 +490,7 @@ class Selection implements IEventDispatcher
                 return selectedObjects[0].willTrigger(type);
         }
 }
+
 
 
 
