@@ -88,7 +88,7 @@ class Selection implements IEventDispatcher
 
                         var newObj:ISVGEditable = selectedObjects[i].clone();
                         cast(newObj, DisplayObject).transform.matrix.concat(m);
-                        newObj.getElement().transform = (newObj as DisplayObject).transform.matrix.clone();
+                        newObj.getElement().transform = cast(newObj, DisplayObject).transform.matrix.clone();
                         objsCopy.push(newObj);
                 }
 
@@ -214,7 +214,7 @@ class Selection implements IEventDispatcher
         }
 
         public function canMoveByMouse():Boolean {
-                return (!isTextField() || (selectedObjects[0] as SVGTextField).selectable == false);
+                return (!isTextField() || cast(selectedObjects[0], SVGTextField).selectable == false);
         }
 
         public function isShape():Boolean {
@@ -231,7 +231,7 @@ class Selection implements IEventDispatcher
 
         public function saveTransform() : Void {
                 for(var i:Int=0; i<selectedObjects.length; ++i) {
-                        var elem:SVGElement = (selectedObjects[i] as ISVGEditable).getElement();
+                        var elem:SVGElement = cast(selectedObjects[i], ISVGEditable).getElement();
                         var m:Matrix = selectedObjects[i].transform.matrix;
                         elem.setAttribute('transform', 'matrix('+m.a+','+m.b+','+m.c+','+m.d+','+m.tx+','+m.ty+')');
                 }
@@ -240,7 +240,7 @@ class Selection implements IEventDispatcher
         public function getRotation(contentLayer:Sprite):Number {
                 if(selectedObjects.length == 1) {
                         var m:Matrix = new Matrix();
-                        var dObj:DisplayObject = selectedObjects[0] as DisplayObject;
+                        var dObj:DisplayObject = cast(selectedObjects[0], DisplayObject);
                         while(dObj && (dObj != contentLayer)) {
                                 m.concat(dObj.transform.matrix);
                                 dObj = dObj.parent;
@@ -459,7 +459,7 @@ class Selection implements IEventDispatcher
                 return;
                 var filters:Array = on ? [new GlowFilter(0x28A5DA)] : [];
                 for(var i:Int=0; i<selectedObjects.length; ++i)
-                        (selectedObjects[i] as DisplayObject).filters = filters;
+                        cast(selectedObjects[i], DisplayObject).filters = filters;
         }
 
         // Below is the EventDispatcher interface implementation
@@ -491,3 +491,4 @@ class Selection implements IEventDispatcher
         }
 }
 }
+
