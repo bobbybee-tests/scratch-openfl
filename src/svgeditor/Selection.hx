@@ -40,7 +40,7 @@ import svgutils.SVGElement;
 
 class Selection implements IEventDispatcher
 {
-        private var selectedObjects: Array<Dynamic>
+        private var selectedObjects: Array<Dynamic>;
         private var refDispObj:DisplayObject;
 
         public function new(objs:Array) {
@@ -254,7 +254,7 @@ class Selection implements IEventDispatcher
                 return 0;
         }
 
-        private var initialMatrices: Array<Dynamic>
+        private var initialMatrices: Array<Dynamic>;
         private var initialTempMatrix:Matrix;
         private var rotationCenter:PoInt;
         private var origRect:Rectangle;
