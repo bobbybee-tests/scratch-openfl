@@ -26,7 +26,7 @@ import openfl.events.Event;
 import openfl.events.IEventDispatcher;
 import openfl.filters.GlowFilter;
 import openfl.geom.Matrix;
-import openfl.geom.PoInt;
+import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.text.TextFieldType;
 
@@ -489,7 +489,6 @@ class Selection implements IEventDispatcher
         public function willTrigger(type:String):Boolean {
                 return selectedObjects[0].willTrigger(type);
         }
-}
 }
 
 
