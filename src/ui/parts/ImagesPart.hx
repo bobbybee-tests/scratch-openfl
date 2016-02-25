@@ -47,7 +47,7 @@ import uiwidgets.*;
 class ImagesPart extends UIPart
 {
 
-	//public var editor : ImageEdit;
+	public var editor : ImageEdit;
 
 	private inline static var columnWidth : Int = 106;
 	private var contentsX : Int = columnWidth + 13;
@@ -87,7 +87,7 @@ class ImagesPart extends UIPart
 		addListFrame();
 		addChild(nameField = new EditableLabel(nameChanged));
 
-		//addEditor(true);
+		addEditor(true);
 
 		addUndoButtons();
 		addFlipButtons();
@@ -95,16 +95,15 @@ class ImagesPart extends UIPart
 		updateTranslation();
 	}
 
-	/*
+	
 	private function addEditor(isSVG : Bool) : Void{
-		if (isSVG) {
+	/*	if (isSVG) {
 			addChild(editor = new SVGEdit(app, this));
 		}
 		else {
-			addChild(editor = new BitmapEdit(app, this));
-		}
+	*/		addChild(editor = new BitmapEdit(app, this));
+	//	}
 	}
-	*/
 
 	public static function strings() : Array<String>{
 		return [
@@ -118,7 +117,7 @@ class ImagesPart extends UIPart
 		clearButton.setLabel(Translator.map("Clear"));
 		libraryButton.setLabel(Translator.map("Add"));
 		editorImportButton.setLabel(Translator.map("Import"));
-		//if (editor != null)             editor.updateTranslation();
+		if (editor != null)             editor.updateTranslation();
 		updateLabel();
 		fixlayout();
 	}
@@ -241,12 +240,12 @@ class ImagesPart extends UIPart
 		if (obj == null)             return;
 		nameField.setContents(obj.currentCostume().costumeName);
 
-		//var zoomAndScroll : Array<Dynamic> = editor.getZoomAndScroll();
-		//editor.shutdown();
+		var zoomAndScroll : Array<Dynamic> = editor.getZoomAndScroll();
+		editor.shutdown();
 		var c : ScratchCostume = obj.currentCostume();
 		useBitmapEditor(c.isBitmap() && c.text == null);
-		//editor.editCostume(c, obj.isStage);
-		//editor.setZoomAndScroll(zoomAndScroll);
+		editor.editCostume(c, obj.isStage);
+		editor.setZoomAndScroll(zoomAndScroll);
 		if (changed)             app.setSaveNeeded();
 	}
 
@@ -279,7 +278,7 @@ class ImagesPart extends UIPart
 		// NOTE: After switching editors, the caller must install costume and other state in the new editor.
 		//var oldSettings : DrawProperties;
 		//var oldZoomAndScroll : Array<Dynamic>;
-		/*
+		
 		if (editor != null) {
 			oldSettings = editor.getShapeProps();
 			oldZoomAndScroll = editor.getWorkArea().getZoomAndScroll();
@@ -299,12 +298,11 @@ class ImagesPart extends UIPart
 			editor.getWorkArea().setZoomAndScroll([oldZoomAndScroll[0], 0.5, 0.5]);
 		}
 		editor.registerToolButton("setCenter", centerButton);
-		*/
+		
 		fixEditorLayout();
 	}
 
 	private function fixEditorLayout() : Void {
-		/*
 		var contentsW : Int = w - contentsX - 15;
 		if (editor != null) {
 			editor.x = contentsX;
@@ -325,7 +323,6 @@ class ImagesPart extends UIPart
 		flipHButton.x = flipVButton.x - flipHButton.width - smallSpace;
 		cropButton.x = flipHButton.x - cropButton.width - smallSpace;
 		cropButton.y = flipHButton.y = flipVButton.y = centerButton.y = nameField.y - 1;
-		*/
 	}
 
 	// -----------------------------
@@ -351,7 +348,6 @@ class ImagesPart extends UIPart
 	//------------------------------
 
 	public function convertToBitmap() : Void {
-		/*
 		function finishConverting() : Void{
 			var c : ScratchCostume = editor.targetCostume;
 			var forStage : Bool = editor.isScene;
@@ -369,12 +365,10 @@ class ImagesPart extends UIPart
 		editor.shutdown();
 		var timer = new Timer(300);
 		timer.run = finishConverting;
-//        setTimeout(finishConverting, 300);
-		*/
+	//        setTimeout(finishConverting, 300);
 	}
 
 	public function convertToVector() : Void {
-		/*
 		if (Std.is(editor, SVGEdit))             return;
 		editor.shutdown();
 		editor.setToolMode("select", true);
@@ -394,7 +388,6 @@ class ImagesPart extends UIPart
 
 		editor.editCostume(c, forStage, true);
 		editor.setZoomAndScroll(zoomAndScroll);
-		*/
 	}
 
 	// -----------------------------
@@ -452,20 +445,20 @@ class ImagesPart extends UIPart
 			c = try cast(costumeOrList[0], ScratchCostume) catch(e:Dynamic) null;
 
 		var p : Point = new Point(240, 180);
-		//editor.addCostume(c, p);
+		editor.addCostume(c, p);
 	}
 
 	public function refreshUndoButtons() : Void{
-		//undoButton.setDisabled(!editor.canUndo(), 0.5);
-		//redoButton.setDisabled(!editor.canRedo(), 0.5);
-		//if (editor.canClearCanvas()) {
-			//clearButton.alpha = 1;
-			//clearButton.mouseEnabled = true;
-		//}
-		//else {
+		undoButton.setDisabled(!editor.canUndo(), 0.5);
+		redoButton.setDisabled(!editor.canRedo(), 0.5);
+		if (editor.canClearCanvas()) {
+			clearButton.alpha = 1;
+			clearButton.mouseEnabled = true;
+		}
+		else {
 			clearButton.alpha = 0.5;
 			clearButton.mouseEnabled = false;
-		//}
+		}
 	}
 
 	public function setCanCrop(enabled : Bool) : Void{
@@ -509,12 +502,10 @@ class ImagesPart extends UIPart
 	}
 
 	private function crop(ignore : Dynamic) : Void {
-		/*
 		var bitmapEditor : BitmapEdit = try cast(editor, BitmapEdit) catch(e:Dynamic) null;
 		if (bitmapEditor != null) {
 			bitmapEditor.cropToSelection();
 		}
-		*/
 	}
 	private function flipH(ignore : Dynamic) : Void{//editor.flipContent(false);
 	}
@@ -522,7 +513,6 @@ class ImagesPart extends UIPart
 	}
 
 	private function addCenterButton() : Void {
-		/*
 		function setCostumeCenter(b : IconButton) : Void{
 			editor.setToolMode("setCenter");
 			b.lastEvent.stopPropagation();
@@ -535,7 +525,6 @@ class ImagesPart extends UIPart
 				});
 		editor.registerToolButton("setCenter", centerButton);
 		addChild(centerButton);
-		*/
 	}
 
 	// -----------------------------
@@ -591,7 +580,7 @@ class ImagesPart extends UIPart
 		}
 		var c : ScratchCostume = ScratchCostume.fromBitmapData(Translator.map("photo1"), photo);
 		addAndSelectCostume(c);
-		//editor.getWorkArea().zoom();
+		editor.getWorkArea().zoom();
 	}
 
 	private function costumeFromCamera(ignore : Dynamic = null) : Void{
