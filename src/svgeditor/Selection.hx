@@ -463,12 +463,12 @@ class Selection implements IEventDispatcher
         }
 
         // Below is the EventDispatcher Interface implementation
-        public function addEventListener(type:String, listener:Function, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false) : Void {
+        public function addEventListener(type:String, listener:Dynamic -> Void, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false) : Void {
                 for(i in 0...selectedObjects.length)
                         selectedObjects[i].addEventListener(type, listener, useCapture, priority, useWeakReference);
         }
 
-        public function removeEventListener(type:String, listener:Function, useCapture:Bool = false) : Void {
+        public function removeEventListener(type:String, listener:Dynamic -> Void, useCapture:Bool = false) : Void {
                 for(i in 0...selectedObjects.length)
                         selectedObjects[i].removeEventListener(type, listener, useCapture);
         }
