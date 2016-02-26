@@ -19,23 +19,16 @@
 
 package svgeditor.tools;
 
-import svgeditor.tools.Dictionary;
-import svgeditor.tools.FocusEvent;
-import svgeditor.tools.KeyboardEvent;
 import svgeditor.tools.SVGEditTool;
-import svgeditor.tools.Selection;
-import svgeditor.tools.Stage;
-import svgeditor.tools.TextField;
-import svgeditor.tools.Timer;
-import svgeditor.tools.TimerEvent;
+import svgeditor.Selection;
 
-import flash.display.*;
-import flash.events.*;
-import flash.filters.GlowFilter;
-import flash.geom.*;
-import flash.text.*;
-import flash.ui.*;
-import flash.utils.*;
+import openfl.display.*;
+import openfl.events.*;
+import openfl.filters.GlowFilter;
+import openfl.geom.*;
+import openfl.text.*;
+import openfl.ui.*;
+import openfl.utils.*;
 
 import svgeditor.*;
 import svgeditor.objs.*;
@@ -74,7 +67,7 @@ class ObjectTransformer extends SVGEditTool {
 	private var rotateHandle : Sprite;
 	private var moveHandle : Sprite;
 	private var activeHandle : Sprite;
-	private var scaleHandleDict : Dictionary;
+	private var scaleHandleDict : Dictionary<Sprite, String>;
 	
 	// State variables
 	private var initialMatrix : Matrix;
@@ -88,7 +81,7 @@ class ObjectTransformer extends SVGEditTool {
 	private var preEditTF : TextField;
 	private var isRefreshing : Bool;
 	private var isTransforming : Bool;
-	private var handleMoveCursor : Function;
+	private var handleMoveCursor : (MouseEvent) -> (Void);
 	
 	public function new(ed : ImageEdit)
 	{
@@ -342,7 +335,7 @@ class ObjectTransformer extends SVGEditTool {
 	public function deleteSelection() : Void{
 		if (Std.is(editor, BitmapEdit)) 			(try cast(editor, BitmapEdit) catch(e:Dynamic) null).deletingSelection();
 		
-		if (targetObj != null) 			targetObj.remove()  // Remove event handlers  ;
+		if (targetObj != null) 			targetObj.remove(); // Remove event handlers
 		
 		
 		

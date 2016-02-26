@@ -83,7 +83,7 @@ class ImageEdit extends Sprite {
 	private var lastToolMode : String;
 	private var currentTool : SVGTool;
 	private var drawPropsUI : DrawPropertyUI;
-	private var toolButtons : Dynamic;
+	private var toolButtons : Array<Dynamic>;
 	private var toolButtonsLayer : Sprite;
 	private var w : Int;private var h : Int;
 	private var workArea : ImageCanvas;
