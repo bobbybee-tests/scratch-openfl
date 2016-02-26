@@ -435,7 +435,7 @@ class ObjectTransformer extends SVGEditTool {
 	// The little handle factory
 	private function makeHandle(handleType : Int = HT_RESIZER) : Sprite{
 		var spr : Sprite = new Sprite();
-		var handler : Function = null;
+		var handler : Dynamic = null;
 		var color : UInt = 0;
 		switch (handleType) {
 			case HT_RESIZER:

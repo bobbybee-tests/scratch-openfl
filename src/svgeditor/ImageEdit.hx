@@ -48,12 +48,12 @@ package svgeditor;
 
 import assets.Resources;
 
-import flash.display.*;
-import flash.events.*;
-import flash.geom.*;
-import flash.text.*;
-import flash.ui.*;
-import flash.utils.ByteArray;
+import openfl.display.*;
+import openfl.events.*;
+import openfl.geom.*;
+import openfl.text.*;
+import openfl.ui.*;
+import openfl.utils.ByteArray;
 
 import scratch.*;
 
@@ -630,7 +630,7 @@ class ImageEdit extends Sprite {
 			
 			
 			if (toolChanged) {
-				if (currentTool.parent) 
+				if (currentTool.parent != null) 
 					toolsLayer.removeChild(currentTool);
 				
 				if (Std.is(currentTool, SVGEditTool)) 
