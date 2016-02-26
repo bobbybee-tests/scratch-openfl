@@ -100,12 +100,12 @@ class Selection implements IEventDispatcher
                 refDispObj = null;
         }
 
-        public function contains(obj:DisplayObject):Boolean {
+        public function contains(obj:DisplayObject):Bool {
                 return (selectedObjects.indexOf(obj) != -1);
         }
 
         // Bring the selected objects forward within their parent
-        public function raise(fully:Boolean = false) : Void {
+        public function raise(fully:Bool = false) : Void {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 var topIndex:Int = p.numChildren - 1;
                 if(fully) {
@@ -121,7 +121,7 @@ class Selection implements IEventDispatcher
         }
 
         // Send the selected objects backward within their parent
-        public function lower(fully:Boolean = false) : Void {
+        public function lower(fully:Bool = false) : Void {
                 var p:DisplayObjectContainer = refDispObj.parent;
                 if(fully) {
                         for(i in 0...selectedObjects.length)
@@ -205,23 +205,23 @@ class Selection implements IEventDispatcher
                 return this;
         }
 
-        public function isGroup():Boolean {
+        public function isGroup():Bool {
                 return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGGroup));
         }
 
-        public function isTextField():Boolean {
+        public function isTextField():Bool {
                 return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGTextField));
         }
 
-        public function canMoveByMouse():Boolean {
+        public function canMoveByMouse():Bool {
                 return (!isTextField() || cast(selectedObjects[0], SVGTextField).selectable == false);
         }
 
-        public function isShape():Boolean {
+        public function isShape():Bool {
                 return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGShape));
         }
 
-        public function isImage():Boolean {
+        public function isImage():Bool {
                 return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGBitmap));
         }
 
@@ -258,7 +258,7 @@ class Selection implements IEventDispatcher
         private var initialTempMatrix:Matrix;
         private var rotationCenter:PoInt;
         private var origRect:Rectangle;
-        private var maIntainAspectRatio:Boolean;
+        private var maIntainAspectRatio:Bool;
         public function startResize(grabLoc:String) : Void {
                 saveMatrices();
                 origRect = getBounds(refDispObj);
@@ -351,7 +351,7 @@ class Selection implements IEventDispatcher
                 objToScale.transform.matrix = m;
         }
 
-        public function flip(vertical:Boolean = false) : Void {
+        public function flip(vertical:Bool = false) : Void {
                 var r:Rectangle = getBounds(refDispObj.parent);
                 var anchorPt:PoInt = new PoInt((r.left+r.right)/2, (r.top+r.bottom)/2);
 
@@ -362,7 +362,7 @@ class Selection implements IEventDispatcher
         }
 
         // TODO: Make more robust for flipping over and over (don't use the concatonated matrix, keep the transforms within the parent)
-        private function flipAroundPoInt(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Boolean) : Void{
+        private function flipAroundPoInt(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Bool) : Void{
                 var p:PoInt = objToFlip.parent.localToGlobal(new PoInt(regX, regY));
                 var m2:Matrix = objToFlip.transform.concatenatedMatrix.clone();
                 m2.translate(-p.x, -p.y);
@@ -455,7 +455,7 @@ class Selection implements IEventDispatcher
                 return bounds;
         }
 
-        public function toggleHighlight(on:Boolean) : Void {
+        public function toggleHighlight(on:Bool) : Void {
                 return;
                 var filters: Array<Dynamic> = on ? [new GlowFilter(0x28A5DA)] : [];
                 for(i in 0...selectedObjects.length)
@@ -463,18 +463,18 @@ class Selection implements IEventDispatcher
         }
 
         // Below is the EventDispatcher Interface implementation
-        public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:Int = 0, useWeakReference:Boolean = false) : Void {
+        public function addEventListener(type:String, listener:Function, useCapture:Bool = false, priority:Int = 0, useWeakReference:Bool = false) : Void {
                 for(i in 0...selectedObjects.length)
                         selectedObjects[i].addEventListener(type, listener, useCapture, priority, useWeakReference);
         }
 
-        public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false) : Void {
+        public function removeEventListener(type:String, listener:Function, useCapture:Bool = false) : Void {
                 for(i in 0...selectedObjects.length)
                         selectedObjects[i].removeEventListener(type, listener, useCapture);
         }
 
-        public function dispatchEvent(event:Event):Boolean {
-                var stopProp:Boolean = false;
+        public function dispatchEvent(event:Event):Bool {
+                var stopProp:Bool = false;
                 for(i in 0...selectedObjects.length)
                         if(selectedObjects[i].dispatchEvent(event))
                                 stopProp = true;
@@ -482,14 +482,15 @@ class Selection implements IEventDispatcher
                 return stopProp;
         }
 
-        public function hasEventListener(type:String):Boolean {
+        public function hasEventListener(type:String):Bool {
                 return selectedObjects[0].hasEventListener(type);
         }
 
-        public function willTrigger(type:String):Boolean {
+        public function willTrigger(type:String):Bool {
                 return selectedObjects[0].willTrigger(type);
         }
 }
+
 
 
 
