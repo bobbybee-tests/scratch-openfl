@@ -237,7 +237,7 @@ class Selection implements IEventDispatcher
                 }
         }
 
-        public function getRotation(contentLayer:Sprite):Number {
+        public function getRotation(contentLayer:Sprite):Float {
                 if(selectedObjects.length == 1) {
                         var m:Matrix = new Matrix();
                         var dObj:DisplayObject = cast(selectedObjects[0], DisplayObject);
@@ -269,8 +269,8 @@ class Selection implements IEventDispatcher
         // The grab location won't change after startResize is called
         public function scaleByMouse(grabLoc:String) : Void {
                 var r:Rectangle = origRect;
-                var sx:Number = 1.0;
-                var sy:Number = 1.0;
+                var sx:Float = 1.0;
+                var sy:Float = 1.0;
                 var anchor:String;
                 switch(grabLoc) {
                         case 'topLeft':
@@ -341,8 +341,8 @@ class Selection implements IEventDispatcher
                 }
         }
 
-        private function scaleAroundPoInt(objToScale:DisplayObject, regX:Int, regY:Int, scaleX:Number, scaleY:Number, m:Matrix) : Void{
-                var r:Number = refDispObj.rotation * Math.PI / 180;
+        private function scaleAroundPoInt(objToScale:DisplayObject, regX:Int, regY:Int, scaleX:Float, scaleY:Float, m:Matrix) : Void{
+                var r:Float = refDispObj.rotation * Math.PI / 180;
                 m.translate( -regX, -regY );
                 m.rotate(-r);
                 m.scale(scaleX, scaleY);
@@ -362,7 +362,7 @@ class Selection implements IEventDispatcher
         }
 
         // TODO: Make more robust for flipping over and over (don't use the concatonated matrix, keep the transforms within the parent)
-        private function flipAroundPoInt(objToFlip:DisplayObject, regX:Number, regY:Number, vertical:Bool) : Void{
+        private function flipAroundPoInt(objToFlip:DisplayObject, regX:Float, regY:Float, vertical:Bool) : Void{
                 var p:PoInt = objToFlip.parent.localToGlobal(new PoInt(regX, regY));
                 var m2:Matrix = objToFlip.transform.concatenatedMatrix.clone();
                 m2.translate(-p.x, -p.y);
@@ -397,7 +397,7 @@ class Selection implements IEventDispatcher
                 }
         }
 
-        public function doRotation(angle:Number) : Void {
+        public function doRotation(angle:Float) : Void {
                 var c:PoInt = rotationCenter;
                 for(i in 0...selectedObjects.length) {
                         var m:Matrix = initialMatrices[i].clone();
@@ -490,6 +490,7 @@ class Selection implements IEventDispatcher
                 return selectedObjects[0].willTrigger(type);
         }
 }
+
 
 
 
