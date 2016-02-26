@@ -66,10 +66,10 @@ class SVGImporter {
 		"filter", "foreignObject", "marker", "metadata", "namedview", 
 		"pattern", "perspective", "pgf", "title", "use"];
 	
-	public function new(svg : FastXML)
+	public function new(svg : Xml)
 	{
 		elements = { };
-		if (svg.node.localName.innerData() != "svg") {
+		if (svg.nodeName() != "svg") {
 			trace("ERROR! Top-level must be an svg element.");
 			return;
 		}
@@ -87,11 +87,11 @@ class SVGImporter {
 	// Element Extraction
 	//------------------------------
 	
-	private function extractElement(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function extractElement(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Extract an SVGElement from the given XML object. Return an SVGElement
 		// or null if the given element is empty or is ignored by Scratch.
 		// Recursively extract subelements if appropriate.
-		var tag : String = xml.node.localName.innerData();
+		var tag : String = xml.nodeName();
 		if (Lambda.indexOf(ignoredTags, tag) >= 0) 			return null;  // ignored by Scratch
 		switch (tag) {
 			case "circle", "clipPath", "ellipse", "image", "line", "path", "polygon", "polyline", "rect", "text":
@@ -114,9 +114,9 @@ class SVGImporter {
 		return null;
 	}
 	
-	private function readBasic(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
-		var result : SVGElement = new SVGElement(xml.node.localName.innerData(), xml.node.attribute.innerData("id"));
-		if ("text" == xml.node.localName.innerData()) 			result.text = xml.nodes.text()[0];
+	private function readBasic(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
+		var result : SVGElement = new SVGElement(xml.nodeName(), xml.get("id"));
+		if ("text" == xml.nodeName()) 			result.text = xml.nodes.text()[0];
 		for (attr/* AS3HX WARNING could not determine type for var: attr exp: ECall(EField(EIdent(xml),attributes),[]) type: null */ in xml.nodes.attributes()){
 			var ns : String = attr.namespace();
 			if ((ns == "") || (ns == "http://www.w3.org/1999/xlink")) {
@@ -133,7 +133,7 @@ class SVGImporter {
 		return result;
 	}
 	
-	private function readDefs(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function readDefs(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Add the subelements of a 'defs' element to elementsDict.
 		// Return null since a 'defs' element (and it's subelements) are not visible.
 		var defsEl : SVGElement = readBasic(xml, parentList);
@@ -144,7 +144,7 @@ class SVGImporter {
 		return null;
 	}
 	
-	private function readGradient(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function readGradient(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Read a 'linearGradient' or 'radialGradient' element, including all it's subelements.
 		// Return null if the group has no subelements.
 		var result : SVGElement = readBasic(xml, []);
@@ -155,7 +155,7 @@ class SVGImporter {
 		return result;
 	}
 	
-	private function readGroup(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function readGroup(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Read a 'g' element, including all it's subelements.
 		// Return null if the group has no subelements.
 		var result : SVGElement = readBasic(xml, parentList);
@@ -168,7 +168,7 @@ class SVGImporter {
 		return result;
 	}
 	
-	private function readText(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function readText(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Read a 'text' element, including all it's subelements.
 		var result : SVGElement = readBasic(xml, parentList);
 		parentList = [result].concat(parentList);
@@ -186,7 +186,7 @@ class SVGImporter {
 		return result;
 	}
 	
-	private function readSVG(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function readSVG(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Read an 'svg' element, including all it's subelements.
 		// Note: Attributes of 'svg' elements are not inherited.
 		var result : SVGElement = readBasic(xml, parentList);
@@ -197,7 +197,7 @@ class SVGImporter {
 		return result;
 	}
 	
-	private function readSwitch(xml : FastXML, parentList : Array<Dynamic>) : SVGElement{
+	private function readSwitch(xml : Xml, parentList : Array<Dynamic>) : SVGElement{
 		// Return a group element with the attributes of the switch element whose
 		// only child is the first switch element that can be handled by Scratch.
 		// Return null if none of the switch elements can be handled.
@@ -258,7 +258,7 @@ class SVGImporter {
 		return false;
 	}
 	
-	public function loadAllImages(whenDone : Function = null) : Void{
+	public function loadAllImages(whenDone : Dynamic = null) : Void{
 		// Load all images. If not null, call whenDone when images are loaded.
 		function imageLoaded() : Void{
 			imagesLoaded++;
@@ -275,7 +275,7 @@ class SVGImporter {
 		if ((imageCount == 0) && (whenDone != null)) 			whenDone(root);
 	}
 	
-	private function loadImage(el : SVGElement, whenDone : Function) : Void{
+	private function loadImage(el : SVGElement, whenDone : Dynamic) : Void{
 		// Load the image for the given element. When the image has loaded,
 		// save it in the element's bitmap variable and call whenDone().
 		function loadDone(evt : Event) : Void{
