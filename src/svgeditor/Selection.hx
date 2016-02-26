@@ -256,7 +256,7 @@ class Selection implements IEventDispatcher
 
         private var initialMatrices: Array<Dynamic>;
         private var initialTempMatrix:Matrix;
-        private var rotationCenter:PoInt;
+        private var rotationCenter:Point;
         private var origRect:Rectangle;
         private var maIntainAspectRatio:Bool;
         public function startResize(grabLoc:String) : Void {
@@ -311,17 +311,17 @@ class Selection implements IEventDispatcher
                                 break;
                 }
 
-                var anchorPt:PoInt;
+                var anchorPt:Point;
                 switch(anchor) {
                         case 'topLeft':
                         case 'bottomRight':
                                 anchorPt = r[anchor];
                                 break;
                         case 'topRight':
-                                anchorPt = new PoInt(r.right, r.top);
+                                anchorPt = new Point(r.right, r.top);
                                 break;
                         case 'bottomLeft':
-                                anchorPt = new PoInt(r.left, r.bottom);
+                                anchorPt = new Point(r.left, r.bottom);
                                 break;
                 }
                 anchorPt = refDispObj.parent.globalToLocal(refDispObj.localToGlobal(anchorPt));
@@ -337,11 +337,11 @@ class Selection implements IEventDispatcher
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
-                        scaleAroundPoInt(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
+                        scaleAroundPoint(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
                 }
         }
 
-        private function scaleAroundPoInt(objToScale:DisplayObject, regX:Int, regY:Int, scaleX:Float, scaleY:Float, m:Matrix) : Void{
+        private function scaleAroundPoint(objToScale:DisplayObject, regX:Int, regY:Int, scaleX:Float, scaleY:Float, m:Matrix) : Void{
                 var r:Float = refDispObj.rotation * Math.PI / 180;
                 m.translate( -regX, -regY );
                 m.rotate(-r);
@@ -353,17 +353,17 @@ class Selection implements IEventDispatcher
 
         public function flip(vertical:Bool = false) : Void {
                 var r:Rectangle = getBounds(refDispObj.parent);
-                var anchorPt:PoInt = new PoInt((r.left+r.right)/2, (r.top+r.bottom)/2);
+                var anchorPt:Point = new Point((r.left+r.right)/2, (r.top+r.bottom)/2);
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
-                        flipAroundPoInt(obj, anchorPt.x, anchorPt.y, vertical);
+                        flipAroundPoint(obj, anchorPt.x, anchorPt.y, vertical);
                 }
         }
 
         // TODO: Make more robust for flipping over and over (don't use the concatonated matrix, keep the transforms within the parent)
-        private function flipAroundPoInt(objToFlip:DisplayObject, regX:Float, regY:Float, vertical:Bool) : Void{
-                var p:PoInt = objToFlip.parent.localToGlobal(new PoInt(regX, regY));
+        private function flipAroundPoint(objToFlip:DisplayObject, regX:Float, regY:Float, vertical:Bool) : Void{
+                var p:Point = objToFlip.parent.localToGlobal(new Point(regX, regY));
                 var m2:Matrix = objToFlip.transform.concatenatedMatrix.clone();
                 m2.translate(-p.x, -p.y);
                 m2.scale(vertical ? 1 : -1, vertical ? -1 : 1);
@@ -375,7 +375,7 @@ class Selection implements IEventDispatcher
                 objToFlip.transform.matrix = m2;
         }
 
-        public function startRotation(center:PoInt) : Void {
+        public function startRotation(center:Point) : Void {
                 rotationCenter = refDispObj.parent.globalToLocal(center);
                 saveMatrices();
 
@@ -398,7 +398,7 @@ class Selection implements IEventDispatcher
         }
 
         public function doRotation(angle:Float) : Void {
-                var c:PoInt = rotationCenter;
+                var c:Point = rotationCenter;
                 for(i in 0...selectedObjects.length) {
                         var m:Matrix = initialMatrices[i].clone();
                         m.translate(-c.x, -c.y);
@@ -414,28 +414,28 @@ class Selection implements IEventDispatcher
                 refDispObj.transform.matrix = m;
         }
 
-        public function getGlobalBoundingPoInts():Object {
+        public function getGlobalBoundingPoints():Object {
                 var r:Rectangle = getBounds(refDispObj);
 
                 return {
                         topLeft:	refDispObj.localToGlobal(r.topLeft),
-                        topRight:	refDispObj.localToGlobal(new PoInt(r.right, r.top)),
-                        botLeft:	refDispObj.localToGlobal(new PoInt(r.left, r.bottom)),
+                        topRight:	refDispObj.localToGlobal(new Point(r.right, r.top)),
+                        botLeft:	refDispObj.localToGlobal(new Point(r.left, r.bottom)),
                         botRight:	refDispObj.localToGlobal(r.bottomRight)
                 };
         }
 
-        public function setTLPosition(p:PoInt) : Void {
-                var parentSpaceTL:PoInt = refDispObj.parent.globalToLocal(p);
-                var globalCurrentTL:PoInt = refDispObj.localToGlobal(getBounds(refDispObj).topLeft);
-                var offset:PoInt = parentSpaceTL.subtract(refDispObj.parent.globalToLocal(globalCurrentTL));
+        public function setTLPosition(p:Point) : Void {
+                var parentSpaceTL:Point = refDispObj.parent.globalToLocal(p);
+                var globalCurrentTL:Point = refDispObj.localToGlobal(getBounds(refDispObj).topLeft);
+                var offset:Point = parentSpaceTL.subtract(refDispObj.parent.globalToLocal(globalCurrentTL));
 //trace('offset: '+offset);
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
                         obj.x += offset.x;
                         obj.y += offset.y;
-                        var p2:PoInt = new PoInt(obj.x, obj.y);
+                        var p2:Point = new Point(obj.x, obj.y);
 //trace(obj+': '+p2);
                 }
 
