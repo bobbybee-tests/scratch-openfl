@@ -414,7 +414,7 @@ class Selection implements IEventDispatcher
                 refDispObj.transform.matrix = m;
         }
 
-        public function getGlobalBoundingPoints()Dynamic {
+        public function getGlobalBoundingPoints() : Dynamic {
                 var r:Rectangle = getBounds(refDispObj);
 
                 return {
