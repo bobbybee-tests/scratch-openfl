@@ -72,7 +72,7 @@ class Selection implements IEventDispatcher
 
         // TODO: remove the requirement to send the contentLayer
         // Clone all of the selected objects and return an array of them
-        public function cloneObjs(contentLayer:Sprite):Array {
+        public function cloneObjs(contentLayer:Sprite): Array<Dynamic> {
                 var copiedObjects: Array<Dynamic> = null;
                 if(!selectedObjects.length) return copiedObjects;
 
@@ -225,7 +225,7 @@ class Selection implements IEventDispatcher
                 return (selectedObjects.length == 1 && Std.is(selectedObjects[0], SVGBitmap));
         }
 
-        public function getObjs():Array {
+        public function getObjs(): Array<Dynamic> {
                 return selectedObjects;
         }
 
@@ -490,6 +490,7 @@ class Selection implements IEventDispatcher
                 return selectedObjects[0].willTrigger(type);
         }
 }
+
 
 
 
