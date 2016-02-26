@@ -43,8 +43,8 @@ class ColorPicker extends Sprite {
 	private var secondaryColorSwatch : Sprite;
 	
 	// Color mapping
-	private var paletteDict : Dictionary;
-	private var paletteReverseDict : Dictionary;
+	private var paletteDict : Dictionary<String, Int>;
+	private var paletteReverseDict : Dictionary<Int, String>;
 	
 	// Selected and transparent color boxes in palette
 	private var selectedColor : Sprite;
@@ -186,7 +186,7 @@ class ColorPicker extends Sprite {
 		drawSwatch(secondaryColorSwatch.graphics, props.secondColor, props.secondAlpha);
 	}
 	
-	private inline var swatchSize : Int = 25;
+	private static inline var swatchSize : Int = 25;
 	
 	private function drawSwatch(g : Graphics, color : UInt, alpha : Float) : Void{
 		var radius : Int = 6;
@@ -312,8 +312,8 @@ class ColorPicker extends Sprite {
 	
 	/* New (Scratch 1.4 Color Palette */
 	
-	private inline var paletteSwatchW : Int = 12;
-	private inline var paletteSwatchH : Int = 12;
+	private static inline var paletteSwatchW : Int = 12;
+	private static inline var paletteSwatchH : Int = 12;
 	
 	private function makeColorPalette() : Void{
 		addChild(palette = new Sprite());
