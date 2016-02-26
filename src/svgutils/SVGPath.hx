@@ -29,15 +29,25 @@
 // as an Array of path commands by other classes.
 
 package svgutils;
-	import flash.display.*;
-	import flash.geom.*;
 
-	import svgeditor.objs.PathDrawContext;
-	import svgeditor.tools.PixelPerfectCollisionDetection;
+import openfl.display.*;
+import openfl.geom.*;
+import openfl.Vector;
 
-class SVGPath extends Array implements Dynamic {
-	private inline var adjustmentFactor:Float = 0.5;
+import svgeditor.objs.PathDrawContext;
+import svgeditor.tools.PixelPerfectCollisionDetection;
+
+// Some type hacking is necessary to make this legitimate haxe
+// Basically, declare a normal class without the fancy [] syntax,
+// Then do a forwarded abstract to make it all work elegantly.
+// See https://stackoverflow.com/questions/20483987/haxe-operator-overloading
+
+class SVGPathImplicit {
+	private static inline var adjustmentFactor:Float = 0.5;
 	private var dirty:Bool;  // has the path been altered since it was loaded or exported?
+
+        // internally masked array
+        private var thisArray:Array<Dynamic>;
 
 	//function new (...args) {
 	function new (ulen:UInt = 0) {
@@ -51,7 +61,7 @@ class SVGPath extends Array implements Dynamic {
 		//else {
 			length = n;
 			//for(var i:Int=0; i < n; ++i)
-				//this[i] = args[i];
+				//thisArray[i] = args[i];
 		//}
 		dirty = false;
 	}
@@ -59,15 +69,15 @@ class SVGPath extends Array implements Dynamic {
 	public function clone():SVGPath {
 		var p:SVGPath = new SVGPath(length);
 		for(i in 0...length)
-			p[i] = this[i].slice();
+			p[i] = thisArray[i].slice();
 
 		return p;
 	}
 
-	public function set(cmds:Array):Void {
+	public function set(cmds:Array<Dynamic>):Void {
 		length = cmds.length;
 		for(i in 0...length)
-			this[i] = cmds[i];
+			thisArray[i] = cmds[i];
 	}
 
 	public function setDirty():Void {
@@ -82,7 +92,7 @@ class SVGPath extends Array implements Dynamic {
 
 	public function move(index:UInt, pt:Point, adjust:UInt = 1):Void {
 		if(index < length) {
-			var cmd:Array = this[index];
+			var cmd:Array = thisArray[index];
 			var ends:Array = getSegmentEndPoints(index);
 			switch (cmd[0]) {
 				case 'M', 'L':
@@ -101,7 +111,7 @@ class SVGPath extends Array implements Dynamic {
 			}
 
 			// If we're moving the end point of a closed path, then move the first point too
-			if(ends[2] && (cmd[0] == 'C' || cmd[0] == 'L') && index == ends[1] && ends[0] != index && this[ends[0]][0] == 'M') {
+			if(ends[2] && (cmd[0] == 'C' || cmd[0] == 'L') && index == ends[1] && ends[0] != index && thisArray[ends[0]][0] == 'M') {
 				move(ends[0], pt, ADJUST.NONE);
 			}
 
@@ -113,7 +123,7 @@ class SVGPath extends Array implements Dynamic {
 
 	public function transform(src:DisplayObject, dst:DisplayObject):Void {
 		for(i in 0...length) {
-			var cmd:Array = this[i];
+			var cmd:Array = thisArray[i];
 			var pt:Point;
 			switch (cmd[0]) {
 				case 'C':
@@ -142,13 +152,13 @@ class SVGPath extends Array implements Dynamic {
 
 			// If the point removed is on a closed path segment and it is the last point,
 			// then move the first move command to match the new last point
-			if(index == ends[1] && ends[2] && ends[0]>0 && this[ends[0] - 1][0] == 'M') {
+			if(index == ends[1] && ends[2] && ends[0]>0 && thisArray[ends[0] - 1][0] == 'M') {
 				p = getPos(index - 1);
-				this[ends[0] - 1] = ['M', p.x, p.y];
+				thisArray[ends[0] - 1] = ['M', p.x, p.y];
 			}
-			else if(index == ends[0] && !ends[2] && index < length - 1 && this[index][0] == 'M') {
+			else if(index == ends[0] && !ends[2] && index < length - 1 && thisArray[index][0] == 'M') {
 				p = getPos(index + 1);
-				this[index + 1] = ['M', p.x, p.y];
+				thisArray[index + 1] = ['M', p.x, p.y];
 			}
 
 			splice(index, 1);
@@ -161,7 +171,7 @@ class SVGPath extends Array implements Dynamic {
 
 	public function add(index:UInt, pt:Point, normal:Bool):Void {
 		if(index < length) {
-			var curve:Bool = this[index][0] == 'C';
+			var curve:Bool = thisArray[index][0] == 'C';
 			if(!normal) curve = !curve;
 			var cmd:Array;
 			if(curve) {
@@ -170,8 +180,8 @@ class SVGPath extends Array implements Dynamic {
 				var cPts2:Array = SVGPath.getControlPointsAdjacentAnchor(getPos(indices[1]), pt, getPos(indices[2]));
 
 				// Keep the original control point from curve before the added curve
-				if(this[index][0] == 'C') {
-					cmd = this[index];
+				if(thisArray[index][0] == 'C') {
+					cmd = thisArray[index];
 					cPts1[1].x = cmd[1];
 					cPts1[1].y = cmd[2];
 				}
@@ -180,8 +190,8 @@ class SVGPath extends Array implements Dynamic {
 				cmd = ['C', cPts1[1].x, cPts1[1].y, cPts2[0].x, cPts2[0].y, pt.x, pt.y];
 
 				// Apply the second control point to the next cubic bezier curve if there is one
-				if(this[indices[2]][0] == 'C') {
-					var cmd2:Array = this[indices[2]];
+				if(thisArray[indices[2]][0] == 'C') {
+					var cmd2:Array = thisArray[indices[2]];
 					cmd2[1] = cPts2[1].x;
 					cmd2[2] = cPts2[1].y;
 				}
@@ -198,7 +208,7 @@ class SVGPath extends Array implements Dynamic {
 
 	public function getPos(index:UInt, time:Float = 1.0):Point {
 		if(index < length) {
-			var cmd:Array = this[index];
+			var cmd:Array = thisArray[index];
 			switch (cmd[0]) {
 				case 'M':
 					return new Point(cmd[1], cmd[2]);
@@ -239,7 +249,7 @@ class SVGPath extends Array implements Dynamic {
 		// Handle the special 2-point path case
 		var cmd:Array;
 		if(!ends[2] && ends[1] - ends[0] == 1) {
-			cmd = this[ends[1]];
+			cmd = thisArray[ends[1]];
 			if(cmd[0] == 'C') {
 				var p:Point = getPos(ends[0]);
 				cmd[1] = p.x;
@@ -260,7 +270,7 @@ class SVGPath extends Array implements Dynamic {
 			var here:Point = after ? after : getPos(indices[i]);
 			var after:Point = getPos(indices[i + 1]);
 			var cPts:Array = SVGPath.getControlPointsAdjacentAnchor(before, here, after);
-			cmd = this[indices[i]];
+			cmd = thisArray[indices[i]];
 			var currStr:Float = Math.pow(strength, 1+Math.abs(midIdx - i));
 			if(!ends[2] && (indices[i] == ends[0] || indices[i] == ends[1]))
 				currStr = 1;
@@ -284,7 +294,7 @@ class SVGPath extends Array implements Dynamic {
 			}
 
 			// Apply the second control point to the next cubic bezier curve if there is one
-			var cmd2:Array = this[indices[i+1]];
+			var cmd2:Array = thisArray[indices[i+1]];
 			if(indices[i] != indices[i+1] && cmd2[0] == 'C') {
 				var c2:Point = Point.interpolate(cPts[1], new Point(cmd2[1], cmd2[2]), currStr);
 				cmd2[1] = c2.x;
@@ -293,7 +303,7 @@ class SVGPath extends Array implements Dynamic {
 		}
 	}
 
-	private function getIndicesAroundAnchor(index:UInt, proximity:UInt = 1):Array {
+	private function getIndicesAroundAnchor(index:UInt, proximity:UInt = 1):Array<Dynamic> {
 		var centerIndex:UInt = index;
 		var indices:Array = [];
 		var ends:Array = getSegmentEndPoints(index);
@@ -334,25 +344,25 @@ class SVGPath extends Array implements Dynamic {
 		return indices;
 	}
 
-	public function getSegmentEndPoints(index:UInt = 0):Array {
+	public function getSegmentEndPoints(index:UInt = 0):Array<Dynamic> {
 		index = Math.min(index, length - 1);
 		var indices:Array = [index, index, false];
 
 		var last:UInt = index;
 		i = index + 1;
-		while(i <= length - 1 && this[i][0] != 'Z' && this[i][0] != 'M') {
+		while(i <= length - 1 && thisArray[i][0] != 'Z' && thisArray[i][0] != 'M') {
 			last = i;
 			++i;
 		}
 		indices[1] = last;
 
 		// Was it a closed path
-		indices[2] = (i <= length - 1 && this[i][0] == 'Z');
+		indices[2] = (i <= length - 1 && thisArray[i][0] == 'Z');
 
 		var first:UInt = last;
 		var i:Int = last - 1;
 		// TODO: handle nested closed segments
-		while(i >= 0 && this[i][0] != 'Z' && this[first][0] != 'M') {
+		while(i >= 0 && thisArray[i][0] != 'Z' && thisArray[first][0] != 'M') {
 			first = i;
 			--i;
 		}
@@ -364,7 +374,7 @@ class SVGPath extends Array implements Dynamic {
 	// Create control points on either side of an anchor point
 	// Each handle is 1/3 the length of the segment on that side of the anchor
 	// The vector of the handles is determined by the vector between the anchor points on either side of 'here'
-	static public function getControlPointsAdjacentAnchor(before:Point, here:Point, after:Point):Array {
+	static public function getControlPointsAdjacentAnchor(before:Point, here:Point, after:Point):Array<Dynamic> {
 		var v1:Point = before.subtract(here);
 		var c1l:Float = v1.length * 0.333;
 		var v2:Point = after.subtract(here);
@@ -381,7 +391,7 @@ class SVGPath extends Array implements Dynamic {
 	}
 
 	public function isClosed():Bool {
-		return (length > 0 && Std.is (this[length-1], Array) && this[length-1][0] == 'z');
+		return (length > 0 && Std.is (thisArray[length-1], Array) && thisArray[length-1][0] == 'z');
 	}
 
 	public static function render(el:SVGElement, g:Graphics, forHitTest:Bool = false):Void {
@@ -612,7 +622,7 @@ class SVGPath extends Array implements Dynamic {
 		return m;
 	}
 
-	private static function gradientBoxForPath(pathCmds:Array):Rectangle {
+	private static function gradientBoxForPath(pathCmds:Array<Dynamic>):Rectangle {
 		// Return a Point containing the approximate width and height for the
 		// the given path, not including its borders or the parts of curves that
 		// bulge outside of their endpoints.
@@ -635,7 +645,7 @@ class SVGPath extends Array implements Dynamic {
 	//////////////////////////////////////////////////////
 	// From anchor points to Bezier
 	/////////////////////////////////////////////////////
-	public function fromAnchorPoints(points:Array):Void {
+	public function fromAnchorPoints(points:Array<Dynamic>):Void {
 		var first:Point = points[0];
 		length = 0;
 		this.push(['M', first.x, first.y]);
@@ -713,7 +723,7 @@ class SVGPath extends Array implements Dynamic {
 		if(t > 0.99)
 			return index;
 
-		var cmd:Array = this[index];
+		var cmd:Array = thisArray[index];
 		var p1:Point = getPos(index - 1);
 		var p2:Point = getPos(index);
 		var newCmd:Array;
@@ -790,7 +800,7 @@ class SVGPath extends Array implements Dynamic {
 		var j:Int = 0;
 		var i = indices[1];
 		while (i>=indices[0]) {
-			var cmd:Array = this[i];
+			var cmd:Array = thisArray[i];
 			var pos:Point = getPos(i);
 			var newCmd:Array;
 			if(lastCmd == null) {
@@ -945,7 +955,7 @@ class SVGPath extends Array implements Dynamic {
 			b1:{a:p03, b:p13, c:p23, d:p3}};
 	}
 
-	static public function renderPathCmd(cmd:Array, g:Graphics, lastCP:Point, startP:Point = null):Void {
+	static public function renderPathCmd(cmd:Array<Dynamic>, g:Graphics, lastCP:Point, startP:Point = null):Void {
 		switch (cmd[0]) {
 			case 'C':
 				SVGPath.drawCubicBezier(g,
@@ -978,7 +988,7 @@ class SVGPath extends Array implements Dynamic {
 	}
 
 	/* debugging */
-	private static function debugDrawPoints(cmds:Array, g:Graphics):Void {
+	private static function debugDrawPoints(cmds:Array<Dynamic>, g:Graphics):Void {
 		g.lineStyle(); // no outline
 		for (cmd in cmds) {
 			var len:Int = cmd.length;
@@ -994,8 +1004,23 @@ class SVGPath extends Array implements Dynamic {
 	public function outputCommands(start:Int=0, end:Int=-1):Void {
 		if(end==-1) end=length-1;
 		for(k in start...end + 1) {
-			var c:Array = this[k];
+			var c:Array = thisArray[k];
 			trace('Command #'+k+': '+c.join(','));
 		}
 	}
+}
+
+// Type hack it all together
+@:forward
+abstract SVGPath(SVGPathImplicit) to SVGPathImplicit from SVGPathImplicit {
+    @:arrayAccess
+    public inline function get(key:Int) {
+        return thisArray[k];
+    }
+
+    @:arrayAccess
+    public inline function set(key:Int, val:Dynamic) : Dynamic {
+        thisArray[k] = val;
+        return val;
+    }
 }
