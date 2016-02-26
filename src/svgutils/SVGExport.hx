@@ -49,8 +49,8 @@ import util.Base64Encoder;
 class SVGExport {
 	
 	private var rootEl : SVGElement;
-	private var rootNode : FastXML;
-	private var defsNode : FastXML;
+	private var rootNode : Xml;
+	private var defsNode : Xml;
 	private var nextID : Int;
 	
 	public function new(svgRoot : SVGElement)
@@ -71,8 +71,8 @@ class SVGExport {
 		// Return the exported SVG file as a string.
 		defsNode = null;
 		nextID = 1;
-		FastXML.ignoreComments = false;
-		rootNode = new FastXML("<svg xmlns='http://www.w3.org/2000/svg' version='1.1' " +
+		Xml.ignoreComments = false;
+		rootNode = new Xml("<svg xmlns='http://www.w3.org/2000/svg' version='1.1' " +
 				"xmlns:xlink='http://www.w3.org/1999/xlink'>\n" +
 				"<!-- Exported by Scratch - http://scratch.mit.edu/ -->\n" +
 				"</svg>");
@@ -105,7 +105,7 @@ class SVGExport {
 		rootNode.setAttribute("viewBox", "" + Math.floor(cropR.x - 1) + " " + Math.floor(cropR.y - 1) + " " + w + " " + h) = "" + Math.floor(cropR.x - 1) + " " + Math.floor(cropR.y - 1) + " " + w + " " + h;
 	}
 	
-	private function addNodeTo(el : SVGElement, xml : FastXML) : Void{
+	private function addNodeTo(el : SVGElement, xml : Xml) : Void{
 		if ("g" == el.tag) 			addGroupNodeTo(el, xml)
 		else if ("image" == el.tag) 			addImageNodeTo(el, xml)
 		else if ("text" == el.tag) 			addTextNodeTo(el, xml)
@@ -113,9 +113,9 @@ class SVGExport {
 		else trace("SVGExport unhandled: " + el.tag);
 	}
 	
-	private function addGroupNodeTo(el : SVGElement, xml : FastXML) : Void{
+	private function addGroupNodeTo(el : SVGElement, xml : Xml) : Void{
 		if (el.subElements.length == 0) 			return;
-		var node : FastXML = createNode(el, []);
+		var node : Xml = createNode(el, []);
 		for (subEl/* AS3HX WARNING could not determine type for var: subEl exp: EField(EIdent(el),subElements) type: null */ in el.subElements){
 			addNodeTo(subEl, node);
 		}
@@ -123,10 +123,10 @@ class SVGExport {
 		xml.node.appendChild.innerData(node);
 	}
 	
-	private function addImageNodeTo(el : SVGElement, xml : FastXML) : Void{
+	private function addImageNodeTo(el : SVGElement, xml : Xml) : Void{
 		if (el.bitmap == null) 			return;
 		var attrList : Array<Dynamic> = ["x", "y", "width", "height", "opacity", "scratch-type"];
-		var node : FastXML = createNode(el, attrList);
+		var node : Xml = createNode(el, attrList);
 		//var pixels : ByteArray = PNG24Encoder.encode(el.bitmap, PNGFilter.PAETH);
 		//node.setAttribute("xlink:href", "data:image/png;base64," + Base64Encoder.encode(pixels)) = "data:image/png;base64," + Base64Encoder.encode(pixels);
 
@@ -137,10 +137,10 @@ class SVGExport {
 		xml.node.appendChild.innerData(node);
 	}
 	
-	private function addPathNodeTo(el : SVGElement, xml : FastXML) : Void{
+	private function addPathNodeTo(el : SVGElement, xml : Xml) : Void{
 		if (el.path == null) 			return;
 		var attrList : Array<Dynamic> = ["fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "opacity", "scratch-type"];
-		var node : FastXML = createNode(el, attrList);
+		var node : Xml = createNode(el, attrList);
 		node.node.setName.innerData("path");
 		node.setAttribute("d", pathCmds(el.path));
 		setTransform(el, node);
@@ -162,7 +162,7 @@ class SVGExport {
 		return result;
 	}
 	
-	private function addTextNodeTo(el : SVGElement, xml : FastXML) : Void{
+	private function addTextNodeTo(el : SVGElement, xml : Xml) : Void{
 		if (!el.text) 			return;
 		var s : String = el.text.replace(new EReg('\\s+$', "g"), "");  // remove trailing whitespace  
 		if (s.length == 0) 			return  // don't save empty text element  ;
@@ -171,13 +171,13 @@ class SVGExport {
 		var attrList : Array<Dynamic> = [
 		"fill", "stroke", "opacity", "x", "y", "dx", "dy", "text-anchor", 
 		"font-family", "font-size", "font-style", "font-weight"];
-		var node : FastXML = createNode(el, attrList);
+		var node : Xml = createNode(el, attrList);
 		node.nodes.text()[0] = s;
 		setTransform(el, node);
 		xml.node.appendChild.innerData(node);
 	}
 	
-	private function createNode(el : SVGElement, attrList : Array<Dynamic> = null) : FastXML{
+	private function createNode(el : SVGElement, attrList : Array<Dynamic> = null) : Xml{
 		// Return a new XML node for the given element. Set the node type
 		// from the element tag and copy the given attributes from the
 		// element attributes into the new node, skipping any that are
@@ -185,7 +185,7 @@ class SVGExport {
 		// SVG hex strings of the form #HHHHHH. Attributes who values are
 		// SVGElement (e.g. gradients) are skipped here and handled elsewhere.
 		var colorAttributes : Array<Dynamic> = ["fill", "stroke"];
-		var node : FastXML = new FastXML("<placeholder> </placeholder>");
+		var node : Xml = new Xml("<placeholder> </placeholder>");
 		node.node.setName.innerData(el.tag);
 		node.setAttribute("id", el.id);
 		for (k in attrList){
@@ -203,7 +203,7 @@ class SVGExport {
 	
 	// Transforms
 	
-	private function setTransform(el : SVGElement, node : FastXML) : Void{
+	private function setTransform(el : SVGElement, node : Xml) : Void{
 		// If this element has a non-null transform, set the transform
 		// attribute of the given node.
 		// Note: This currently outputs a general matrix transform. To make the
@@ -221,7 +221,7 @@ class SVGExport {
 		// Create a definition for the given gradient element and
 		// return an internal URL reference to it. Return null if
 		// the element is not a gradient.
-		var node : FastXML;
+		var node : Xml;
 		if (gradEl.tag == "linearGradient") {
 			node = createNode(gradEl, ["x1", "y1", "x2", "y2", "gradientUnits"]);
 		}
@@ -234,7 +234,7 @@ class SVGExport {
 		node.setAttribute("id", "grad_" + nextID++) = "grad_" + nextID++;
 		
 		for (subEl/* AS3HX WARNING could not determine type for var: subEl exp: EField(EIdent(gradEl),subElements) type: null */ in gradEl.subElements){
-			var stopNode : FastXML = new FastXML("<stop> </stop>");
+			var stopNode : Xml = new Xml("<stop> </stop>");
 			stopNode.setAttribute("offset", subEl.getAttribute("offset", 0));
 			stopNode.setAttribute("stop-color", subEl.getAttribute("stop-color", 0));
 			var opacity : Dynamic = subEl.getAttribute("stop-opacity");
@@ -245,9 +245,9 @@ class SVGExport {
 		return "url(#" + node.att.id + ")";
 	}
 	
-	private function addDefinition(node : FastXML) : Void{
+	private function addDefinition(node : Xml) : Void{
 		// Add the given node to the defs node, creating the defs node if necessary.
-		if (defsNode == null) 			defsNode = new FastXML("<defs> </defs>");
+		if (defsNode == null) 			defsNode = new Xml("<defs> </defs>");
 		defsNode.node.appendChild.innerData(node);
 	}
 }
