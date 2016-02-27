@@ -305,8 +305,10 @@ class Selection implements IEventDispatcher
 
                 var anchorPt:Point;
                 switch(anchor) {
-                        case 'topLeft', 'bottomRight':
-                                anchorPt = r[anchor];
+                        case 'topLeft':
+				anchorPt = new Point(r.left, r.top);
+			case 'bottomRight':
+                                anchorPt = new Point(r.right, r.bottom);
                         case 'topRight':
                                 anchorPt = new Point(r.right, r.top);
                         case 'bottomLeft':
