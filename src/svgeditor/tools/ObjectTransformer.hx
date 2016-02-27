@@ -449,7 +449,7 @@ class ObjectTransformer extends SVGEditTool {
 				color = moveColor;
 				handler = moveHandler;
 		}
-		var handlerWrapper : Function = function(e : MouseEvent) : Void{toolCursorHandler(e, handleType);
+		var handlerWrapper : (MouseEvent) -> (Void) = function(e : MouseEvent) : Void{toolCursorHandler(e, handleType);
 		};
 		spr.addEventListener(MouseEvent.ROLL_OVER, handlerWrapper, false, 0, true);
 		spr.addEventListener(MouseEvent.ROLL_OUT, handlerWrapper, false, 0, true);
@@ -499,9 +499,11 @@ class ObjectTransformer extends SVGEditTool {
 			case HT_RESIZER:
 				updateResizeCursor(try cast(e.target, Sprite) catch(e:Dynamic) null);
 			case HT_ROTATOR:
-				editor.setCurrentCursor("rotateCursor", "rotateCursor", new Point(10, 13));
+                                /* Disable cursor setting */
+				//editor.setCurrentCursor("rotateCursor", "rotateCursor", new Point(10, 13));
 			case HT_MOVER:
-				editor.setCurrentCursor(MouseCursor.HAND);
+				/* Disable cursor setting*/
+				//editor.setCurrentCursor(MouseCursor.HAND);
 		}
 	}
 	
