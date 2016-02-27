@@ -591,7 +591,7 @@ class ObjectTransformer extends SVGEditTool {
 	
 	private var movingHandle : Bool = false;
 	private var wasMoved : Bool = false;
-	private function moveHandler(e : MouseEvent, newSelection : Bool = false) : Void{
+	private function moveHandler(e : MouseEvent) : Void{
 		if (stage == null) 			return;
 		
 		var _sw2_ = (e.type);		
@@ -622,27 +622,26 @@ class ObjectTransformer extends SVGEditTool {
 						setActive(true);
 						e.stopImmediatePropagation();
 				}
-				if (!editor.getCanvasLayer().getBounds(Lib.current.stage).containsPoint(new Point(Lib.current.stage.mouseX, Lib.current.stage.mouseY))) 
-					break;
-				
-				if (moveOffset != null) {
-					x = parent.mouseX - moveOffset.x;
-					y = parent.mouseY - moveOffset.y;
-					if (Std.is(editor, BitmapEdit)) {
-						var p : Point = toolsLayer.globalToLocal(localToGlobal(new Point(topLeftHandle.x, topLeftHandle.y)));
-						var snapped : Point = editor.snapToGrid(p);
-						x += snapped.x - p.x;
-						y += snapped.y - p.y;
-					}
-					updateTarget();
-				}
-				else {
-					moveHandle.x = mouseX;
-					moveHandle.y = mouseY;
-				}
-				
-				if (e.type == MouseEvent.MOUSE_MOVE) {
-					wasMoved = true;
+				if (editor.getCanvasLayer().getBounds(Lib.current.stage).containsPoint(new Point(Lib.current.stage.mouseX, Lib.current.stage.mouseY))) {
+				    if (moveOffset != null) {
+					    x = parent.mouseX - moveOffset.x;
+					    y = parent.mouseY - moveOffset.y;
+					    if (Std.is(editor, BitmapEdit)) {
+						    var p : Point = toolsLayer.globalToLocal(localToGlobal(new Point(topLeftHandle.x, topLeftHandle.y)));
+						    var snapped : Point = editor.snapToGrid(p);
+						    x += snapped.x - p.x;
+						    y += snapped.y - p.y;
+					    }
+					    updateTarget();
+				    }
+				    else {
+					    moveHandle.x = mouseX;
+					    moveHandle.y = mouseY;
+				    }
+				    
+				    if (e.type == MouseEvent.MOUSE_MOVE) {
+					    wasMoved = true;
+				    }
 				}
 			
 			case MouseEvent.MOUSE_UP:
