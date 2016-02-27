@@ -561,8 +561,8 @@ class ObjectTransformer extends SVGEditTool {
 		switch (_sw1_) {
 			case MouseEvent.MOUSE_DOWN:
 				activeHandle = cast((e.target), Sprite);
-				editor.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-				STAGE.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+                                editor.addEventListener(MouseEvent.MOUSE_MOVE, resizeHandler, false, 0, true);
+				STAGE.addEventListener(MouseEvent.MOUSE_UP, resizeHandler, false, 0, true);
 				e.stopPropagation();
 				
 				// Reset the center since we're resizing
@@ -577,9 +577,9 @@ class ObjectTransformer extends SVGEditTool {
 			
 			case MouseEvent.MOUSE_UP:
 				setActive(false);
-				editor.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				STAGE.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
-				removeEventListener(MouseEvent.MOUSE_DOWN, arguments.callee);
+				editor.removeEventListener(MouseEvent.MOUSE_MOVE, resizeHandler);
+				STAGE.removeEventListener(MouseEvent.MOUSE_UP, resizeHandler);
+				removeEventListener(MouseEvent.MOUSE_DOWN, resizeHandler);
 				activeHandle = null;
 				targetObj.saveTransform();
 				
