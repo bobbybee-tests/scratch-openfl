@@ -48,6 +48,7 @@ package svgeditor;
 
 import assets.Resources;
 
+import openfl.Lib;
 import openfl.display.*;
 import openfl.events.*;
 import openfl.geom.*;
@@ -188,12 +189,13 @@ class ImageEdit extends Sprite {
 	}
 	
 	private function workAreaMouseHandler(event : MouseEvent) : Void{
-		if (event.type == MouseEvent.MOUSE_OVER && currentCursor != null) {
+                /* Disable custom cursor support */
+		/*if (event.type == MouseEvent.MOUSE_OVER && currentCursor != null) {
 			CursorTool.setCustomCursor(currentCursor);
 		}
 		else {
 			CursorTool.setCustomCursor(MouseCursor.AUTO);
-		}  // Capture mouse down before anyone else in case there is a global tool running  
+		} */ // Capture mouse down before anyone else in case there is a global tool running  
 		
 		
 		
@@ -955,7 +957,8 @@ class ImageEdit extends Sprite {
 	
 	public function setCurrentCursor(name : String, bmp : Dynamic = null, hotSpot : Point = null, reuse : Bool = true) : Void{
 		//trace('setting cursor to '+name);
-		if (name == null || [MouseCursor.HAND, MouseCursor.BUTTON].indexOf(name) > -1) {
+		/* Disable custom cursor support */
+                /*if (name == null || [MouseCursor.HAND, MouseCursor.BUTTON].indexOf(name) > -1) {
 			currentCursor = (name == (null) ? MouseCursor.AUTO : name);
 			CursorTool.setCustomCursor(currentCursor);
 		}
@@ -973,7 +976,7 @@ class ImageEdit extends Sprite {
 		}
 		else {
 			CursorTool.setCustomCursor(MouseCursor.AUTO);
-		}
+		}*/
 	}
 	
 	public function snapToGrid(toolsP : Point) : Point{
