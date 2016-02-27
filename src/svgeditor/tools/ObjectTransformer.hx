@@ -483,7 +483,7 @@ class ObjectTransformer extends SVGEditTool {
 				if (editor != null) 
 					editor.setCurrentCursor(null)
 				else if (e.currentTarget) 
-					e.currentTarget.removeEventListener(e.type, arguments.callee);
+					e.currentTarget.removeEventListener(e.type, toolCursorHandler);
 			}
 			return;
 		}  // Don't switch cursors while transforming  
@@ -607,8 +607,8 @@ class ObjectTransformer extends SVGEditTool {
 						
 						if (!targetObj.canMoveByMouse()) 
 							return;
-						editor.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-						Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+						editor.addEventListener(MouseEvent.MOUSE_MOVE, moveHandler, false, 0, true);
+						Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, moveHandler, false, 0, true);
 						
 						// If they are pressing shift and clicking on the move handle, allow the user
 						// to move the handle (changing the center of rotation for the object)
@@ -648,8 +648,8 @@ class ObjectTransformer extends SVGEditTool {
 			case MouseEvent.MOUSE_UP:
 				setActive(false);
 				centerMoved = (moveOffset == null);
-				editor.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
+				editor.removeEventListener(MouseEvent.MOUSE_MOVE, moveHandler);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, moveHandler);
 				
 				targetObj.saveTransform();
 				
@@ -790,8 +790,8 @@ class ObjectTransformer extends SVGEditTool {
 				// The editor will want to return to the rectangle or ellipse tool if the user clicks outside of the selection and the selection is holding a just-drawn rectangle or ellipse.
 				if (editor.revertToCreateTool(e)) 					return;
 				
-				Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, selectionBoxHandler, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, selectionBoxHandler, false, 0, true);
 				selectionOrigin = editor.snapToGrid(new Point(toolsLayer.mouseX, toolsLayer.mouseY));
 				
 				currentEvent = null;
@@ -809,8 +809,8 @@ class ObjectTransformer extends SVGEditTool {
 			
 			case MouseEvent.MOUSE_UP:
 				toolsLayer.graphics.clear();
-				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, selectionBoxHandler);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, selectionBoxHandler);
 				
 				if (Std.is(editor, BitmapEdit)) {
 					// Compute the selection rectangle relative to the bitmap content.
