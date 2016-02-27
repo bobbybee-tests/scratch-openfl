@@ -592,7 +592,7 @@ class ObjectTransformer extends SVGEditTool {
 	private var movingHandle : Bool = false;
 	private var wasMoved : Bool = false;
 	private function moveHandler(e : MouseEvent, newSelection : Bool = false) : Void{
-		if (!stage) 			return;
+		if (stage == null) 			return;
 		
 		var _sw2_ = (e.type);		
 
