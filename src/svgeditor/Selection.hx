@@ -389,8 +389,9 @@ class Selection implements IEventDispatcher
 
         public function doRotation(angle:Float) : Void {
                 var c:Point = rotationCenter;
+                var m:Matrix;
                 for(i in 0...selectedObjects.length) {
-                        var m:Matrix = initialMatrices[i].clone();
+                        m = initialMatrices[i].clone();
                         m.translate(-c.x, -c.y);
                         m.rotate( angle );
                         m.translate(c.x, c.y);
