@@ -327,7 +327,7 @@ class Selection implements IEventDispatcher
 
                 for(i in 0...selectedObjects.length) {
                         var obj:DisplayObject = selectedObjects[i];
-                        scaleAroundPoint(obj, anchorPt.x, anchorPt.y, sx, sy, initialMatrices[i].clone());
+                        scaleAroundPoint(obj, cast(anchorPt.x, Int), cast(anchorPt.y, Int), sx, sy, initialMatrices[i].clone());
                 }
         }
 
