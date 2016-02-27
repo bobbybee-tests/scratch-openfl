@@ -277,52 +277,40 @@ class Selection implements IEventDispatcher
                                 anchor = 'bottomRight';
                                 sx = (r.right - refDispObj.mouseX) / r.width;
                                 sy = (r.bottom - refDispObj.mouseY) / r.height;
-                                break;
                         case 'top':
                                 anchor = 'bottomRight';
                                 sy = (r.bottom - refDispObj.mouseY) / r.height;
-                                break;
                         case 'topRight':
                                 anchor = 'bottomLeft';
                                 sx = (refDispObj.mouseX - r.left) / r.width;
                                 sy = (r.bottom - refDispObj.mouseY) / r.height;
-                                break;
                         case 'right':
                                 anchor = 'topLeft';
                                 sx = (refDispObj.mouseX - r.left) / r.width;
-                                break;
                         case 'bottomLeft':
                                 anchor = 'topRight';
                                 sx = (r.right - refDispObj.mouseX) / r.width;
                                 sy = (refDispObj.mouseY - r.top) / r.height;
-                                break;
                         case 'bottom':
                                 anchor = 'topLeft';
                                 sy = (refDispObj.mouseY - r.top) / r.height;
-                                break;
                         case 'bottomRight':
                                 anchor = 'topLeft';
                                 sx = (refDispObj.mouseX - r.left) / r.width;
                                 sy = (refDispObj.mouseY - r.top) / r.height;
-                                break;
                         case 'left':
                                 anchor = 'bottomRight';
                                 sx = (r.right - refDispObj.mouseX) / r.width;
-                                break;
                 }
 
                 var anchorPt:Point;
                 switch(anchor) {
-                        case 'topLeft':
-                        case 'bottomRight':
+                        case 'topLeft', 'bottomRight':
                                 anchorPt = r[anchor];
-                                break;
                         case 'topRight':
                                 anchorPt = new Point(r.right, r.top);
-                                break;
                         case 'bottomLeft':
                                 anchorPt = new Point(r.left, r.bottom);
-                                break;
                 }
                 anchorPt = refDispObj.parent.globalToLocal(refDispObj.localToGlobal(anchorPt));
 
