@@ -29,6 +29,7 @@ import openfl.geom.*;
 import openfl.text.*;
 import openfl.ui.*;
 import openfl.utils.*;
+import openfl.Lib;
 
 import svgeditor.*;
 import svgeditor.objs.*;
@@ -136,7 +137,7 @@ class ObjectTransformer extends SVGEditTool {
 	}
 	
 	override private function shutdown() : Void{
-		var stageObject : Stage = STAGE;
+		var stageObject : Stage = Lib.current.stage;
 		
 		// Remove event handlers
 		removeSelectionEventHandlers();
@@ -191,7 +192,7 @@ class ObjectTransformer extends SVGEditTool {
 			preEditTF = try cast(targetObj.getObjs()[0], TextField) catch(e:Dynamic) null;
 			preEditTF.type = TextFieldType.INPUT;
 			preEditTF.addEventListener(FocusEvent.FOCUS_IN, handleTextFocus, false, 0, true);
-			STAGE.focus = null;
+			Lib.current.stage.focus = null;
 		}
 	}
 	
@@ -280,10 +281,10 @@ class ObjectTransformer extends SVGEditTool {
 				moveHandler(new MouseEvent(MouseEvent.MOUSE_DOWN), true);
 			}
 			
-			STAGE.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed, false, 0, true);
+			Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed, false, 0, true);
 		}
 		else {
-			STAGE.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+			Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 			transform.matrix = new Matrix();
 		}
 		
@@ -345,7 +346,7 @@ class ObjectTransformer extends SVGEditTool {
 	}
 	
 	private function removeSelectionEventHandlers() : Void{
-		var stageObject : Stage = STAGE;
+		var stageObject : Stage = Lib.current.stage;
 		if (stageObject != null) {
 			stageObject.removeEventListener(MouseEvent.MOUSE_UP, moveHandler);
 			stageObject.removeEventListener(MouseEvent.MOUSE_UP, resizeHandler);
@@ -361,8 +362,8 @@ class ObjectTransformer extends SVGEditTool {
 	
 	private function keyPressed(e : KeyboardEvent) : Void{
 		if (isShuttingDown || !editor.isActive()) 			return;
-		if ((Std.is(STAGE.focus, TextField) ||
-			(Std.is(STAGE.focus, SVGTextField) && (try cast(STAGE.focus, SVGTextField) catch(e:Dynamic) null).type == TextFieldType.INPUT))) 			return;
+		if ((Std.is(Lib.current.stage.focus, TextField) ||
+			(Std.is(Lib.current.stage.focus, SVGTextField) && (try cast(Lib.current.stage.focus, SVGTextField) catch(e:Dynamic) null).type == TextFieldType.INPUT))) 			return;
 		
 		var changed : Bool = true;
 		var _sw0_ = (e.keyCode);		
@@ -506,7 +507,7 @@ class ObjectTransformer extends SVGEditTool {
 	
 	private function updateResizeCursor(handle : Sprite) : Void{
 		var isDiagonal : Bool = (try cast(Reflect.field(scaleHandleDict, Std.string(handle)), String) catch(e:Dynamic) null).length > 6;
-		var r : Rectangle = targetObj.getBounds(STAGE);
+		var r : Rectangle = targetObj.getBounds(Lib.current.stage);
 		var center : Point = new Point((r.left + r.right) / 2, (r.top + r.bottom) / 2);
 		var up : Point = localToGlobal(new Point(handle.x, handle.y)).subtract(center);
 		up.normalize(1);
@@ -562,7 +563,7 @@ class ObjectTransformer extends SVGEditTool {
 			case MouseEvent.MOUSE_DOWN:
 				activeHandle = cast((e.target), Sprite);
                                 editor.addEventListener(MouseEvent.MOUSE_MOVE, resizeHandler, false, 0, true);
-				STAGE.addEventListener(MouseEvent.MOUSE_UP, resizeHandler, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, resizeHandler, false, 0, true);
 				e.stopPropagation();
 				
 				// Reset the center since we're resizing
@@ -578,7 +579,7 @@ class ObjectTransformer extends SVGEditTool {
 			case MouseEvent.MOUSE_UP:
 				setActive(false);
 				editor.removeEventListener(MouseEvent.MOUSE_MOVE, resizeHandler);
-				STAGE.removeEventListener(MouseEvent.MOUSE_UP, resizeHandler);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, resizeHandler);
 				removeEventListener(MouseEvent.MOUSE_DOWN, resizeHandler);
 				activeHandle = null;
 				targetObj.saveTransform();
@@ -607,7 +608,7 @@ class ObjectTransformer extends SVGEditTool {
 						if (!targetObj.canMoveByMouse()) 
 							return;
 						editor.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-						STAGE.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+						Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
 						
 						// If they are pressing shift and clicking on the move handle, allow the user
 						// to move the handle (changing the center of rotation for the object)
@@ -621,7 +622,7 @@ class ObjectTransformer extends SVGEditTool {
 						setActive(true);
 						e.stopImmediatePropagation();
 				}
-				if (!editor.getCanvasLayer().getBounds(STAGE).containsPoint(new Point(STAGE.mouseX, STAGE.mouseY))) 
+				if (!editor.getCanvasLayer().getBounds(Lib.current.stage).containsPoint(new Point(Lib.current.stage.mouseX, Lib.current.stage.mouseY))) 
 					break;
 				
 				if (moveOffset != null) {
@@ -648,7 +649,7 @@ class ObjectTransformer extends SVGEditTool {
 				setActive(false);
 				centerMoved = (moveOffset == null);
 				editor.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				STAGE.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
 				
 				targetObj.saveTransform();
 				
@@ -665,8 +666,8 @@ class ObjectTransformer extends SVGEditTool {
 
 		switch (_sw3_) {
 			case MouseEvent.MOUSE_DOWN:
-				STAGE.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-				STAGE.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
 				
 				// Make sure we can rotate around the center of the selection
 				e.stopPropagation();
@@ -694,8 +695,8 @@ class ObjectTransformer extends SVGEditTool {
 			
 			case MouseEvent.MOUSE_UP:
 				setActive(false);
-				STAGE.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				STAGE.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
 				targetObj.saveTransform();
 				
 				// The object changed!
@@ -789,8 +790,8 @@ class ObjectTransformer extends SVGEditTool {
 				// The editor will want to return to the rectangle or ellipse tool if the user clicks outside of the selection and the selection is holding a just-drawn rectangle or ellipse.
 				if (editor.revertToCreateTool(e)) 					return;
 				
-				STAGE.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-				STAGE.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
 				selectionOrigin = editor.snapToGrid(new Point(toolsLayer.mouseX, toolsLayer.mouseY));
 				
 				currentEvent = null;
@@ -808,8 +809,8 @@ class ObjectTransformer extends SVGEditTool {
 			
 			case MouseEvent.MOUSE_UP:
 				toolsLayer.graphics.clear();
-				STAGE.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				STAGE.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
 				
 				if (Std.is(editor, BitmapEdit)) {
 					// Compute the selection rectangle relative to the bitmap content.
