@@ -28,17 +28,19 @@
 // SVGElements can convert SVG colors in various formats to an integer RGB value.
 
 package svgutils;
-	import flash.display.*;
-	import flash.geom.*;
-	import flash.text.*;
 
-	import svgeditor.DrawProperties;
+import openfl.display.*;
+import openfl.geom.*;
+import openfl.text.*;
+import openfl.utils.*;
+
+import svgeditor.DrawProperties;
 
 class SVGElement {
 
 	public var tag:String;
 	public var id:String;
-	public var attributes:Dynamic;
+	public var attributes:Dictionary<String, Dynamic>;
 	public var subElements:Array<SVGElement>;
 
 	public var bitmap:BitmapData;
@@ -158,7 +160,7 @@ class SVGElement {
 	}
 
 	public function setAttribute(key:String, value:Dynamic):Void {
-		if (value == null || value == undefined) {
+		if (value == null) {
 			//delete attributes[key];
 			Reflect.deleteField (attributes, key);
 		} else {
