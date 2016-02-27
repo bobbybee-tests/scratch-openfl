@@ -666,8 +666,8 @@ class ObjectTransformer extends SVGEditTool {
 
 		switch (_sw3_) {
 			case MouseEvent.MOUSE_DOWN:
-				Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, arguments.callee, false, 0, true);
-				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, arguments.callee, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, rotateHandler, false, 0, true);
+				Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, rotateHandler, false, 0, true);
 				
 				// Make sure we can rotate around the center of the selection
 				e.stopPropagation();
@@ -695,8 +695,8 @@ class ObjectTransformer extends SVGEditTool {
 			
 			case MouseEvent.MOUSE_UP:
 				setActive(false);
-				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, arguments.callee);
-				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, arguments.callee);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, rotateHandler);
+				Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, rotateHandler);
 				targetObj.saveTransform();
 				
 				// The object changed!
